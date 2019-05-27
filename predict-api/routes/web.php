@@ -11,6 +11,21 @@
 |
 */
 
+use Illuminate\Http\Response;
+
+$apiVersion = "v2";
+
 $router->get('/', function () use ($router) {
     return $router->app->version();
+});
+
+$router->get("/$apiVersion/satellites", function () {
+    $satellites = array(
+        array(
+            'name' => 'iss',
+            'id'   => 25544
+        )
+    );
+    return (new Response(json_encode($satellites), 200))
+        ->header('Content-Type', 'application/json');
 });
