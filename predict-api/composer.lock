@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b2e643aa72d326dd067a41f61b7062b1",
+    "content-hash": "972536b571d2c4aa94887abdd4402e6d",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -1744,6 +1744,42 @@
                 "type"
             ],
             "time": "2015-07-25T16:39:46+00:00"
+        },
+        {
+            "name": "predict/predict",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shupp/Predict.git",
+                "reference": "34e6e044f0d5e57738f1f74d2a60f34f31196284"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shupp/Predict/zipball/34e6e044f0d5e57738f1f74d2a60f34f31196284",
+                "reference": "34e6e044f0d5e57738f1f74d2a60f34f31196284",
+                "shasum": ""
+            },
+            "type": "library",
+            "authors": [
+                {
+                    "name": "Bill Shupp",
+                    "email": "bill@shupp.org"
+                }
+            ],
+            "description": "Predict PHP",
+            "homepage": "https://github.com/shupp/Predict",
+            "keywords": [
+                "iss",
+                "satellite",
+                "sdp4",
+                "sgp",
+                "sgp4"
+            ],
+            "support": {
+                "source": "https://github.com/shupp/Predict/tree/master",
+                "issues": "https://github.com/shupp/Predict/issues"
+            },
+            "time": "2019-05-25T16:17:03+00:00"
         },
         {
             "name": "psr/container",
@@ -4350,7 +4386,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "predict/predict": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
