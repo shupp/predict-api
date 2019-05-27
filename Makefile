@@ -9,6 +9,7 @@ run-sleep-container: rm-sleep-container
 	docker run \
 		--rm \
 		-d \
+		-v ${PWD}/predict-api:/predict-api \
 		--name predictphp \
 		predictphp sleep 1000000000
 exec-bash-command:
