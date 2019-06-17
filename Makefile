@@ -3,6 +3,13 @@ build:
 	docker build -t predictphp .
 build-no-cache:
 	docker build --no-cache -t predictphp .
+up:
+	docker-compose up -d
+down:
+	docker-compose down
+logs:
+	docker-compose logs -f
+
 run-local: rm-local-container
 	docker run \
 		--rm \

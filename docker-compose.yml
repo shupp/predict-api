@@ -1,0 +1,47 @@
+version: "3.2"
+
+networks:
+  predict_net:
+    driver: bridge
+
+services:
+  api:
+    restart: always
+    networks:
+      - predict_net
+    image: predictphp:latest
+    environment:
+        DB_ADDR: "mysql"
+        DB_PASSWORD: "password"
+        DB_USER: "root"
+        DB_NAME: "predictphp"
+    depends_on:
+      - mysql-seed-client
+  mysql-seed-client:
+    restart: "no"
+    networks:
+      - predict_net
+    image: mariadb:latest
+    environment:
+       MYSQL_ROOT_PASSWORD: "password"
+       MYSQL_DATABASE: "predictphp"
+       MYSQL_USER: "predictphp"
+       MYSQL_PASSWORD: "password"
+    entrypoint: /sql/seed-mysql-data.sh
+    volumes:
+      - ./sql:/sql
+    depends_on:
+      - mysql
+  mysql:
+    restart: always
+    networks:
+      - predict_net
+    ports:
+      - target: "3306"
+        protocol: "tcp"
+    image: mariadb:latest
+    environment:
+       MYSQL_ROOT_PASSWORD: "password"
+       MYSQL_DATABASE: "predictphp"
+       MYSQL_USER: "predictphp"
+       MYSQL_PASSWORD: "password"
