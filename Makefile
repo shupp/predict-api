@@ -27,6 +27,6 @@ run-sleep-container: rm-local-container
 exec-bash-command:
 	docker exec -ti predictphp bash -o vi
 exec-bash: run-sleep-container exec-bash-command
-exec-bash-only: exec-bash-command
+	$(MAKE) rm-local-container
 rm-local-container:
 	-docker rm -f predictphp
