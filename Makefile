@@ -1,8 +1,17 @@
+IMAGE = predictphp
+
+help:
+	@grep '^[^#[:space:]].*:' Makefile \
+		| awk -F: '{ print $$1 }' \
+		| sort
+
 # Build targets
 build:
-	docker build -t predictphp .
+	docker build -t $(IMAGE) .
 build-no-cache:
-	docker build --no-cache -t predictphp .
+	docker build --no-cache -t $(IMAGE) .
+
+# Run targets
 up:
 	docker-compose up -d
 down:
@@ -10,30 +19,10 @@ down:
 logs:
 	docker-compose logs -f
 
-run-local: rm-local-container
-	docker run \
-		--rm \
-		-p 8080:80 \
-		-d \
-		-v ${PWD}/predict-api:/predict-api \
-		--name predictphp \
-		predictphp
-
-logs-local:
-	docker logs -f predictphp
-
 # Debug targets
-run-sleep-container: rm-local-container
-	docker run \
-		--rm \
-		-d \
-		-p 8080:80 \
-		-v ${PWD}/predict-api:/predict-api \
-		--name predictphp \
-		predictphp sleep 1000000000
-exec-bash-command:
-	docker exec -ti predictphp bash -o vi
-exec-bash: run-sleep-container exec-bash-command
-	$(MAKE) rm-local-container
-rm-local-container:
-	-docker rm -f predictphp
+# Get a shell on the running api service container
+bash:
+	docker-compose exec api bash -o vi
+# Start the api contiainer on its own with just a shell
+run-bash:
+	docker run --rm -it $(IMAGE) bash
