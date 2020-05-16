@@ -5,7 +5,7 @@ PredictPHP is a REST API for the [Predict](https://github.com/shupp/Predict) lib
 
 ## Example usage
 
-Build the predicphp image
+Build the predictphp image
 
 ```
 make build
