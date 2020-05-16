@@ -140,7 +140,7 @@ class Application extends Container
      */
     public function version()
     {
-        return 'Lumen (5.8.7) (Laravel Components 5.8.*)';
+        return 'Lumen (5.8.12) (Laravel Components 5.8.*)';
     }
 
     /**
@@ -420,6 +420,12 @@ class Application extends Container
     {
         $this->singleton('filesystem', function () {
             return $this->loadComponent('filesystems', 'Illuminate\Filesystem\FilesystemServiceProvider', 'filesystem');
+        });
+        $this->singleton('filesystem.disk', function () {
+            return $this->loadComponent('filesystems', 'Illuminate\Filesystem\FilesystemServiceProvider', 'filesystem.disk');
+        });
+        $this->singleton('filesystem.cloud', function () {
+            return $this->loadComponent('filesystems', 'Illuminate\Filesystem\FilesystemServiceProvider', 'filesystem.cloud');
         });
     }
 
@@ -812,6 +818,26 @@ class Application extends Container
     }
 
     /**
+     * Determine if the application configuration is cached.
+     *
+     * @return bool
+     */
+    public function configurationIsCached()
+    {
+        return false;
+    }
+
+    /**
+     * Determine if the application events are cached.
+     *
+     * @return bool
+     */
+    public function eventsAreCached()
+    {
+        return false;
+    }
+
+    /**
      * Determine if the application is running in the console.
      *
      * @return bool
@@ -922,6 +948,8 @@ class Application extends Container
             'Illuminate\Contracts\Encryption\Encrypter' => 'encrypter',
             'Illuminate\Contracts\Events\Dispatcher' => 'events',
             'Illuminate\Contracts\Filesystem\Factory' => 'filesystem',
+            'Illuminate\Contracts\Filesystem\Filesystem' => 'filesystem.disk',
+            'Illuminate\Contracts\Filesystem\Cloud' => 'filesystem.cloud',
             'Illuminate\Contracts\Hashing\Hasher' => 'hash',
             'log' => 'Psr\Log\LoggerInterface',
             'Illuminate\Contracts\Queue\Factory' => 'queue',
@@ -958,6 +986,10 @@ class Application extends Container
         'db' => 'registerDatabaseBindings',
         'Illuminate\Database\Eloquent\Factory' => 'registerDatabaseBindings',
         'filesystem' => 'registerFilesystemBindings',
+        'filesystem.cloud' => 'registerFilesystemBindings',
+        'filesystem.disk' => 'registerFilesystemBindings',
+        'Illuminate\Contracts\Filesystem\Cloud' => 'registerFilesystemBindings',
+        'Illuminate\Contracts\Filesystem\Filesystem' => 'registerFilesystemBindings',
         'Illuminate\Contracts\Filesystem\Factory' => 'registerFilesystemBindings',
         'encrypter' => 'registerEncrypterBindings',
         'Illuminate\Contracts\Encryption\Encrypter' => 'registerEncrypterBindings',
