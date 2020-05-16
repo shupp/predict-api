@@ -15,6 +15,8 @@ services:
         DB_PASSWORD: "password"
         DB_USER: "root"
         DB_NAME: "predictphp"
+    ports:
+      - 8080:80
     depends_on:
       - mysql-seed-client
   mysql-seed-client:
