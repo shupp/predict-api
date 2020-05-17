@@ -11,10 +11,17 @@ services:
       - predict_net
     image: predictphp:latest
     environment:
-        DB_ADDR: "mysql"
+        DB_CONNECTION: "mysql"
+        DB_HOST: "mysql"
+        DB_PORT: "3306"
+        DB_DATABASE: "predictphp"
+        DB_USERNAME: "root"
         DB_PASSWORD: "password"
-        DB_USER: "root"
-        DB_NAME: "predictphp"
+        APP_NAME: "Predict API"
+        APP_ENV: "local"
+        APP_DEBUG: "true"
+        APP_URL: "http://localhost:8080"
+        APP_TIMEZONE: "America/Los_Angeles"
     ports:
       - 8080:80
     depends_on:
