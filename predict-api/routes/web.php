@@ -12,6 +12,7 @@
 */
 
 use Illuminate\Http\Response;
+use App\Http\Controllers;
 
 $apiVersion = "v2";
 
@@ -19,13 +20,5 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->get("/$apiVersion/satellites", function () {
-    $satellites = array(
-        array(
-            'name' => 'iss',
-            'id'   => 25544
-        )
-    );
-    return (new Response(json_encode($satellites), 200))
-        ->header('Content-Type', 'application/json');
-});
+$router->get("/$apiVersion/satellites", 'ApiController@listSatellites');
+$router->get("/$apiVersion/satellites/{id}/tle",  'ApiController@getTle');
