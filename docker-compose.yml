@@ -22,6 +22,9 @@ services:
         APP_DEBUG: "true"
         APP_URL: "http://localhost:8080"
         APP_TIMEZONE: "America/Los_Angeles"
+    # volumes:
+      # - ${PWD}/predict-api/routes/:/predict-api/routes/
+      # - ${PWD}/predict-api/app/:/predict-api/app/
     ports:
       - 8080:80
     depends_on:
