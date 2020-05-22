@@ -33,7 +33,7 @@ $ curl -s localhost:8080/v2/satellites | jq .
 ]
 ```
 
-Or refresh the ISS TLE file:
+Refresh the ISS TLE file:
 
 ```
 $ curl -s -X POST "localhost:8080/v2/satellites/25544/tle/refresh" | jq -r .
@@ -43,6 +43,16 @@ $ curl -s -X POST "localhost:8080/v2/satellites/25544/tle/refresh" | jq -r .
   "line1": "1 25544U 98067A   20143.56318382  .00000454  00000-0  16202-4 0  9994",
   "line2": "2 25544  51.6434 115.2941 0001418 343.5417 126.5978 15.49381561228046"
 }
+```
+
+Backfill the archive for a TLE:
+
+```
+$ time curl -s -X POST "localhost:8080/v2/satellites/25544/tle/backfill"
+{"status":"ok"}
+real	0m6.954s
+user	0m0.006s
+sys	0m0.007s
 ```
 
 And then get the current ISS location:
