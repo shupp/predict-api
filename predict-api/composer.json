@@ -29,6 +29,7 @@
             "tests/"
         ]
     },
+    "include-path": ["vendor/predict/predict"],
     "scripts": {
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
