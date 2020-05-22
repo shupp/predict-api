@@ -25,6 +25,7 @@ services:
     # volumes:
       # - ${PWD}/predict-api/routes/:/predict-api/routes/
       # - ${PWD}/predict-api/app/:/predict-api/app/
+      # - ${PWD}/predict-api/bootstrap/:/predict-api/bootstrap/
     ports:
       - 8080:80
     depends_on:
