@@ -21,4 +21,5 @@ $router->get('/', function () use ($router) {
 });
 
 $router->get("/$apiVersion/satellites", 'ApiController@listSatellites');
+$router->get("/$apiVersion/satellites/{id}",  'ApiController@getSatellite');
 $router->get("/$apiVersion/satellites/{id}/tle",  'ApiController@getTle');

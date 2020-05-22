@@ -402,6 +402,7 @@ class ComposerStaticInit66ff2d260f205ee0dd4882cb6f1f51d6
         'App\\Events\\Event' => __DIR__ . '/../..' . '/app/Events/Event.php',
         'App\\Events\\ExampleEvent' => __DIR__ . '/../..' . '/app/Events/ExampleEvent.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
+        'App\\Http\\Controllers\\ApiController' => __DIR__ . '/../..' . '/app/Http/Controllers/ApiController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\ExampleController' => __DIR__ . '/../..' . '/app/Http/Controllers/ExampleController.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
