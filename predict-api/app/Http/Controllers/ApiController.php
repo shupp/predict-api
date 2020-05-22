@@ -15,8 +15,9 @@ class ApiController extends Controller
 {
     protected $_satellites = array(
         '25544' => array(
-            'name' => 'iss',
-            'id'   => 25544
+            'name'   => 'iss',
+            'id'     => 25544,
+            'tleUrl' => 'http://www.celestrak.com/NORAD/elements/stations.txt'
         )
     );
 
@@ -80,6 +81,43 @@ class ApiController extends Controller
         );
     }
 
+    protected function _insertTleIntoDb(\Predict_TLE $tle)
+    {
+        // Check first
+        $query = "SELECT `id` FROM tles WHERE
+                    `norad_cat_no` = ?
+                    AND `el_set_epoch_unix` = ?";
+        $results = app('db')->select(
+            $query,
+            [
+                $tle->catnr,
+                \Predict_Time::getEpochTimeStamp($tle)
+            ]
+        );
+        if (count($results)) {
+            return;
+        }
+
+        // If no results, insert
+        $query = "INSERT INTO tles (
+                    `norad_cat_no`,
+                    `el_set_epoch_unix`,
+                    `el_set_line_0`,
+                    `el_set_line_1`,
+                    `el_set_line_2`
+                  ) VALUES (?, ?, ?, ?, ?)";
+        $results = app('db')->insert(
+            $query,
+            [
+                $tle->catnr,
+                \Predict_Time::getEpochTimeStamp($tle),
+                $tle->header,
+                $tle->line1,
+                $tle->line2
+            ]
+        );
+    }
+
     public function getSatellite($id) {
         if (!isset($this->_satellites[$id])) {
             return (new Response("", 404))
@@ -137,25 +175,59 @@ class ApiController extends Controller
         // Handle units
         $velocity = $sat->velo * 60 * 60;
         $satAlt = $sat->alt;
+        $footprint = $sat->footprint;
         if ($units == 'miles') {
-            $satAlt = $sat->alt * \Predict::km2mi;
-            $velocity = $velocity * \Predict::km2mi;
+            $satAlt    = $sat->alt  * \Predict::km2mi;
+            $velocity  = $velocity  * \Predict::km2mi;
+            $footprint = $footprint * \Predict::km2mi;
         }
 
         $data = array(
             'name'      => $this->_satellites[$id]['name'],
+            'id'        => $this->_satellites[$id]['id'],
             'latitude'  => $sat->ssplat,
             'longitude' => $sat->ssplon,
-            'altitude'  => number_format($satAlt, 2),
-            'velocity'  => number_format($velocity, 2),
+            'altitude'  => $satAlt,
+            'velocity'  => $velocity,
             'visbility' => $vis,
-            'footprint' => ($sat->footprint * 1000) / 2,
+            'footprint' => $footprint,
             'timestamp' => $timestamp,
+            'daynum'    => $daynum,
             'solar_lat' => $solarlat,
             'solar_lon' => $solarlon,
             'units'     => $units
         );
 
         return $data;
+    }
+
+    public function refreshTle($id) {
+        if (!isset($this->_satellites[$id])) {
+            return (new Response("", 404))
+                ->header('Content-Type', 'application/json');
+        }
+
+        $contents = file_get_contents($this->_satellites[$id]['tleUrl']);
+        if ($contents === false) {
+            return (new Response(['error' => 'Unable to retrieve tle'], 500))
+                ->header('Content-Type', 'application/json');
+        }
+        $lines = explode("\r\n", $contents);
+        $tle = new \Predict_TLE(
+            $lines[0],
+            $lines[1],
+            $lines[2]
+        );
+
+        $this->_insertTleIntoDb($tle);
+
+        $payload = array(
+            'tle_timestamp' => \Predict_Time::getEpochTimeStamp($tle),
+            'header'        => $tle->header,
+            'line1'         => $tle->line1,
+            'line2'         => $tle->line2
+        );
+        return (new Response(json_encode($payload), 200))
+            ->header('Content-Type', 'application/json');
     }
 }
