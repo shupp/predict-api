@@ -5,8 +5,8 @@
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 
 DB_ADDR=${DB_ADDR:-mysql}
-DB_USER=${DB_USER:-predictphp}
-DB_NAME=${DB_NAME:-predictphp}
+DB_USER=${DB_USER:-predict-api}
+DB_NAME=${DB_NAME:-predict-api}
 SECRET_DB_PASS=${SECRET_DB_PASS:-password}
 
 DATE=`date +%s`

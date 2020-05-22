@@ -1,4 +1,4 @@
-IMAGE = predictphp
+IMAGE = predict-api
 
 help:
 	@grep '^[^#[:space:]].*:' Makefile \

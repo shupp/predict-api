@@ -9,12 +9,12 @@ services:
     restart: always
     networks:
       - predict_net
-    image: predictphp:latest
+    image: predict-api:latest
     environment:
         DB_CONNECTION: "mysql"
         DB_HOST: "mysql"
         DB_PORT: "3306"
-        DB_DATABASE: "predictphp"
+        DB_DATABASE: "predict-api"
         DB_USERNAME: "root"
         DB_PASSWORD: "password"
         APP_NAME: "Predict API"
@@ -36,10 +36,10 @@ services:
       - predict_net
     image: mariadb:latest
     environment:
-       MYSQL_ROOT_PASSWORD: "password"
-       MYSQL_DATABASE: "predictphp"
-       MYSQL_USER: "predictphp"
-       MYSQL_PASSWORD: "password"
+       DB_ADDR: "mysql"
+       DB_USER: "predict-api"
+       DB_NAME: "predict-api"
+       SECRET_DB_PASS: "password"
     entrypoint: /sql/seed-mysql-data.sh
     volumes:
       - ./sql:/sql
@@ -55,6 +55,6 @@ services:
     image: mariadb:latest
     environment:
        MYSQL_ROOT_PASSWORD: "password"
-       MYSQL_DATABASE: "predictphp"
-       MYSQL_USER: "predictphp"
+       MYSQL_DATABASE: "predict-api"
+       MYSQL_USER: "predict-api"
        MYSQL_PASSWORD: "password"
