@@ -15,9 +15,11 @@ class ApiController extends Controller
 {
     protected $_satellites = array(
         '25544' => array(
-            'name'   => 'iss',
-            'id'     => 25544,
-            'tleUrl' => 'http://www.celestrak.com/NORAD/elements/stations.txt'
+            'name'          => 'iss',
+            'id'            => 25544,
+            'tleUrl'        => 'http://www.celestrak.com/NORAD/elements/stations.txt',
+            'tleArchiveUrl' => 'http://www.celestrak.com/NORAD/archives/zarya.zip',
+            'defaultHeader' => 'ISS (ZARYA)'
         )
     );
 
@@ -239,6 +241,75 @@ class ApiController extends Controller
             'line2'         => $tle->line2
         );
         return (new Response(json_encode($payload), 200))
+            ->header('Content-Type', 'application/json');
+    }
+
+    public function backfillTle($id) {
+        if (!isset($this->_satellites[$id])) {
+            return (new Response("", 404))
+                ->header('Content-Type', 'application/json');
+        }
+
+        // Fetch zip contents
+        $sat = $this->_satellites[$id];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $sat['tleArchiveUrl']);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $results = curl_exec($ch);
+        curl_close($ch);
+
+        if ($results === false) {
+            return (new Response(['error' => 'Unable to retrieve tle archive'], 500))
+                ->header('Content-Type', 'application/json');
+        }
+
+        // Unzip, which has to be done on the filesystem unfortunately
+        $uniq = uniqid();
+        $dirName = "/tmp/predict-api-" . $uniq;
+        $zipName = $dirName . ".zip";
+
+        $temp = fopen($zipName, "w+");
+        fwrite($temp, $results);
+        fclose($temp);
+
+        $zip = new \ZipArchive();
+        $zip->open($zipName);
+        $zip->extractTo($dirName);
+        $zip->close();
+
+        $urlParts = explode('/', $sat['tleArchiveUrl']);
+        $pathEnd = end($urlParts);
+        $txtName = $dirName . '/' . str_replace('.zip', '.txt', $pathEnd);
+
+        $contents = file_get_contents($txtName);
+
+        // Clean up temp files
+        unlink($zipName);
+        unlink($txtName);
+        rmdir($dirName);
+
+        // Insert into DB
+        $lines = explode("\r\n", $contents);
+
+        $currentLine = 0;
+        while ($currentLine < (count($lines) - 2)) {
+            $line1 = $lines[$currentLine];
+            $currentLine++;
+            $line2 = $lines[$currentLine];
+            $currentLine++;
+
+            $tle = new \Predict_TLE(
+                $sat['defaultHeader'],
+                $line1,
+                $line2
+            );
+            $this->_insertTleIntoDb($tle);
+        }
+
+        return (new Response(json_encode(array('status' => 'ok')), 201))
             ->header('Content-Type', 'application/json');
     }
 }

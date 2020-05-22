@@ -1,7 +1,7 @@
 FROM alpine
 RUN apk update && apk add php composer php-zip php-dom php-tokenizer \
     php-xmlwriter php-xml php-simplexml bash neovim git nginx php-fpm \
-    supervisor php-pdo_mysql
+    supervisor php-pdo_mysql php-curl
 RUN mkdir /run/nginx
 ADD predict-api /predict-api
 RUN chown nobody:nobody /predict-api/storage/logs/
