@@ -22,7 +22,18 @@ class ApiController extends Controller
     );
 
     public function listSatellites() {
-        return (new Response(json_encode(array_values($this->_satellites)), 200))
+        // Prune output
+        $satellites = [];
+        foreach($this->_satellites as $key => $sat) {
+            array_push(
+                $satellites,
+                array(
+                    "name" => $sat["name"],
+                    "id"   => $sat["id"]
+                )
+            );
+        }
+        return (new Response(json_encode($satellites), 200))
             ->header('Content-Type', 'application/json');
     }
 
