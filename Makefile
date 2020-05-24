@@ -25,4 +25,4 @@ bash:
 	docker-compose exec api bash -o vi
 # Start the api contiainer on its own with just a shell
 run-bash:
-	docker run --entrypoint /bin/sh --rm -it $(IMAGE) /bin/sh
+	docker run --entrypoint /bin/bash --rm -it $(API_IMAGE)
