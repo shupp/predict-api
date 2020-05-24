@@ -9,7 +9,7 @@ services:
     restart: always
     networks:
       - predict_net
-    image: predict-api:latest
+    image: predictphp/api:latest
     environment:
         DB_CONNECTION: "mysql"
         DB_HOST: "mysql"
@@ -34,7 +34,7 @@ services:
     restart: "no"
     networks:
       - predict_net
-    image: mariadb:latest
+    image: predictphp/mariadb-timezone-data:latest
     environment:
        DB_ADDR: "mysql"
        DB_USER: "predict-api"

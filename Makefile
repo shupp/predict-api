@@ -1,4 +1,6 @@
-IMAGE = predict-api
+API_IMAGE = predictphp/api
+DB_IMAGE = predictphp/mariadb-timezone-data
+DOCKER_CACHE_ARG := ${DOCKER_CACHE_ARG}
 
 help:
 	@grep '^[^#[:space:]].*:' Makefile \
@@ -6,10 +8,13 @@ help:
 		| sort
 
 # Build targets
-build:
-	docker build -t $(IMAGE) .
+build: build-api build-db
+build-api:
+	docker build $(DOCKER_CACHE_ARG) -t $(API_IMAGE) .
+build-db:
+	docker build $(DOCKER_CACHE_ARG) -f Dockerfile.mariadb-timezone-data -t $(DB_IMAGE) .
 build-no-cache:
-	docker build --no-cache -t $(IMAGE) .
+	$(MAKE) build DOCKER_CACHE_ARG=--no-cache
 
 # Run targets
 up:

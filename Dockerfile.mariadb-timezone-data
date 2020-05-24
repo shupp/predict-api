@@ -1,0 +1,7 @@
+FROM mariadb:latest
+RUN apt-get update && apt-get install -y gdal-bin curl unzip
+RUN cd / \
+        && curl -L -o /timezones.shapefile.zip \
+		https://github.com/evansiroky/timezone-boundary-builder/releases/download/2020a/timezones.shapefile.zip \
+        && unzip timezones.shapefile.zip \
+        && rm timezones.shapefile.zip

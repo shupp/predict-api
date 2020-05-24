@@ -62,6 +62,9 @@ if [ ${RETURN_CODE} != 0 ] ; then
     exit ${RETURN_CODE}
 fi
 
+printf "Adding timezones shapefile to db\n"
+ogr2ogr -progress -lco engine=MYISAM -f MySQL \
+    MySQL:${DB_NAME},user=${DB_USER},password=${SECRET_DB_PASS},host=${DB_ADDR} /dist/combined-shapefile.shp
 
 printf "done\n"
 
