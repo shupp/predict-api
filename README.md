@@ -76,11 +76,25 @@ $ curl -s "localhost:8080/v2/satellites/25544" | jq -r .
 }
 ```
 
-Lastly, you can also pull down a TLE file:
+You can also pull down a TLE file:
 
 ```
 $ curl -s "localhost:8080/v2/satellites/25544/tle?format=text"
 ISS (ZARYA)
 1 25544U 98067A   20143.56318382  .00000454  00000-0  16202-4 0  9994
 2 25544  51.6434 115.2941 0001418 343.5417 126.5978 15.49381561228046
+```
+
+And get information about coordinates:
+
+```
+$ curl -s localhost:8080/v2/coordinates/37.770061,-122.466157 | jq -r .
+{
+  "latitude": "37.770061",
+  "longitude": "-122.466157",
+  "timezone_id": "America/Los_Angeles",
+  "offset": -7,
+  "country_code": "US",
+  "map_url": "https://maps.google.com/maps?q=37.770061,-122.466157&z=4"
+}
 ```

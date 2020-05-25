@@ -312,4 +312,58 @@ class ApiController extends Controller
         return (new Response(json_encode(array('status' => 'ok')), 201))
             ->header('Content-Type', 'application/json');
     }
+
+    public function coordinates($id) {
+        // Get params
+        $coords = explode(',', $id);
+        $lat    = isset($coords[0]) ? $coords[0] : '';
+        $lon    = isset($coords[1]) ? $coords[1] : '';
+
+        if (!$this->_validateCoordinate($lat) || !$this->_validateCoordinate($lon)) {
+            $errorMessage = 'invalid coordinates';
+            return (new Response(json_encode(array('status' => 'error', 'message' => $errorMessage)), 400))
+                ->header('Content-Type', 'application/json');
+        }
+
+        // Run query
+        $tzId  = null;
+        $query = "SELECT tzid FROM combined_shapefile WHERE ST_Contains(SHAPE, POINT(?, ?)) LIMIT 1";
+        $results = app('db')->select($query, [$lon, $lat]);
+
+        if (!count($results)) {
+            $errorMessage = 'Timezone Not Found for coordinates';
+            return (new Response(json_encode(array('status' => 'error', 'message' => $errorMessage)), 404))
+                ->header('Content-Type', 'application/json');
+        }
+        $tzId = $results[0]->tzid;
+
+        // Add some extra data
+        $mapsUrl     = 'https://maps.google.com/maps?q=' . $lat . ',' . $lon . '&z=4';
+        $date        = new \DateTime($tzId);
+        $location    = $date->getTimezone()->getLocation();
+        $countryCode = isset($location['country_code'])
+                       ? $location['country_code'] : 'unknown';
+
+        $data = array(
+            'latitude'       => $lat,
+            'longitude'      => $lon,
+            'timezone_id'    => $tzId,
+            'offset'         => $date->getOffset() / 60 / 60, // Use hours
+            'country_code'   => $countryCode,
+            'map_url'        => $mapsUrl
+        );
+        return $data;
+    }
+
+    protected function _validateCoordinate($coord)
+    {
+        if (!is_numeric($coord)) {
+            return false;
+        }
+
+        if ($coord >= 360 || $coord <= -360) {
+            return false;
+        }
+        return true;
+    }
 }
