@@ -12,11 +12,11 @@ services:
     image: predictphp/api:latest
     environment:
         DB_CONNECTION: "mysql"
-        DB_HOST: "mysql"
-        DB_PORT: "3306"
-        DB_DATABASE: "predict-api"
-        DB_USERNAME: "root"
-        DB_PASSWORD: "password"
+        DB_HOST: "${DB_HOST}"
+        DB_PORT: "${DB_PORT}"
+        DB_DATABASE: "${DB_DATABASE}"
+        DB_USERNAME: "${DB_USERNAME}"
+        DB_PASSWORD: "${DB_PASSWORD}"
         APP_NAME: "Predict API"
         APP_ENV: "local"
         APP_DEBUG: "true"
@@ -37,9 +37,9 @@ services:
     image: predictphp/mariadb-timezone-data:latest
     environment:
        DB_ADDR: "mysql"
-       DB_USER: "predict-api"
-       DB_NAME: "predict-api"
-       SECRET_DB_PASS: "password"
+       DB_USER: "${DB_USERNAME}"
+       DB_NAME: "${DB_DATABASE}"
+       SECRET_DB_PASS: "${DB_PASSWORD}"
     entrypoint: /sql/seed-mysql-data.sh
     volumes:
       - ./sql:/sql
@@ -51,10 +51,11 @@ services:
       - predict_net
     ports:
       - target: "3306"
+        published: "3306"
         protocol: "tcp"
     image: mariadb:latest
     environment:
-       MYSQL_ROOT_PASSWORD: "password"
-       MYSQL_DATABASE: "predict-api"
-       MYSQL_USER: "predict-api"
-       MYSQL_PASSWORD: "password"
+       MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+       MYSQL_DATABASE: "${DB_DATABASE}"
+       MYSQL_USER: "${DB_USERNAME}"
+       MYSQL_PASSWORD: "${DB_PASSWORD}"
