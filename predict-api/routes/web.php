@@ -26,3 +26,4 @@ $router->get("/$apiVersion/satellites/{id}/tle",  'ApiController@getTle');
 $router->post("/$apiVersion/satellites/{id}/tle/refresh",  'ApiController@refreshTle');
 $router->post("/$apiVersion/satellites/{id}/tle/backfill",  'ApiController@backfillTle');
 $router->get("/$apiVersion/coordinates/{id}",  'ApiController@coordinates');
+$router->get("/$apiVersion/healthcheck",  'ApiController@healthCheck');

@@ -366,4 +366,18 @@ class ApiController extends Controller
         }
         return true;
     }
+
+    public function healthCheck() {
+        try {
+            $results = app('db')->select("select count(*) as count from combined_shapefile;");
+            if ($results[0]->count != '426') {
+                $payload = ['status' => 'error', 'message' => 'db not ready'];
+                return $payload;
+            }
+        } catch (\PDOException $e) {
+            $payload = ['status' => 'error', 'message' => 'db error'];
+            return $payload;
+        }
+        return ['status' => 'ok'];
+    }
 }
