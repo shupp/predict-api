@@ -34,19 +34,20 @@ mysql-seed-client_1  | Adding timezones shapefile to db
 
 ## Endpoints
 
-__GET /satellites__
+---
+### GET /satellites
 
 This endpoint returns a list of satellites that this API has information about, inluding a common name and NORAD catalog id.
 
-### Parameters
+#### Parameters
 None
 
-### Example URL
+#### Example URL
 ```
 curl -s http://localhost:8080/v2/satellites
 ```
 
-### Example Response
+#### Example Response
 ```
 [
   {
@@ -56,21 +57,22 @@ curl -s http://localhost:8080/v2/satellites
 ]
 ```
 
-__GET /satellites/[id]__
+---
+### GET /satellites/[id]
 
 Returns position, velocity, and other related information about a satellite for a given point in time. `[id]` is required and should be the NORAD catalog id. For the ISS, that id is 25544.
 
-### Parameters
+#### Parameters
 | Name   | Description | Required | Default |
 | ------ | ----------- | -------- | ------- |
 | units | Whether to use `miles` or `kilometers` | no | `kilometers` |
 
-### Example URL
+#### Example URL
 ```
 curl -s http://localhost:8080/v2/satellites/25544
 ```
 
-### Example Response
+#### Example Response
 ```
 {
   "name": "iss",
@@ -89,40 +91,42 @@ curl -s http://localhost:8080/v2/satellites/25544
 }
 ```
 
-__GET /satellites/[id]/tle__
+---
+### GET /satellites/[id]/tle
 
 Returns the TLE data for a given satellite in either `json` or `text` format
 
-### Parameters
+#### Parameters
 | Name   | Description | Required | Default |
 | ------ | ----------- | -------- | ------- |
 | format | response format, can be `json` or `text` | no | `json` |
 
-### Example URL
+#### Example URL
 ```
 curl -s http://localhost:8080/v2/satellites/25544/tle?format=text
 ```
 
-### Example Response
+#### Example Response
 ```
 ISS (ZARYA)
 1 25544U 98067A   20143.56318382  .00000454  00000-0  16202-4 0  9994
 2 25544  51.6434 115.2941 0001418 343.5417 126.5978 15.49381561228046
 ```
 
-__POST /satellites/[id]/tle/refresh__
+---
+### POST /satellites/[id]/tle/refresh
 
 Refresh the ISS TLE file from [celestrak](http://celestrak.com).  This should be used at maximum once a day to keep your TLE up to date for a given satellite.
 
-### Parameters
+#### Parameters
 None
 
-### Example URL
+#### Example URL
 ```
 curl -s -X POST http://localhost:8080/v2/satellites/25544/tle/refresh
 ```
 
-### Example Response
+#### Example Response
 ```
 {
   "tle_timestamp": 1590154259,
@@ -132,40 +136,42 @@ curl -s -X POST http://localhost:8080/v2/satellites/25544/tle/refresh
 }
 ```
 
-__POST /satellites/[id]/tle/backfill__
+---
+### POST /satellites/[id]/tle/backfill
 
 Backfill all historical TLEs from [celestrak](http://celestrak.com) for a given satellite.  __This should only be called once__.
 
 NOTE: it may take 10 seconds or so to complete.
 
-### Parameters
+#### Parameters
 None
 
-### Example URL
+#### Example URL
 ```
 curl -s -X POST http://localhost:8080/v2/satellites/25544/tle/backfill
 ```
 
-### Example Response
+#### Example Response
 ```
 {
   "status":"ok"
 }
 ```
 
-__GET /coordinates/[lat,lon]__
+---
+### GET /coordinates/[lat,lon]
 
 Returns position, current time offset, country code, and timezone id for a given set of coordinates in the format of longitude,latitude.
 
-### Parameters
+#### Parameters
 None
 
-### Example URL
+#### Example URL
 ```
 curl -s http://localhost:8080/v2/coordinates/37.770061,-122.466157
 ```
 
-### Example Response
+#### Example Response
 ```
 {
   "latitude": "37.770061",
