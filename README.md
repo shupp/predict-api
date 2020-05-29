@@ -21,10 +21,33 @@ Creating predict-api_mysql-seed-client_1 ... done
 Creating predict-api_api_1               ... done
 ```
 
-Now you can call the api to list satellites:
-
+You may also want to run `make logs`, and wait for the MySQL data seeding to complete:
 ```
-$ curl -s localhost:8080/v2/satellites | jq .
+$ make logs
+--SNIP--
+mysql-seed-client_1  | MySQL is now available
+mysql-seed-client_1  | Creating tables:
+mysql-seed-client_1  | done.
+mysql-seed-client_1  | Populating tables:
+mysql-seed-client_1  | Adding timezones shapefile to db
+```
+
+## Endpoints
+
+__GET /satellites__
+
+This endpoint returns a list of satellites that this API has information about, inluding a common name and NORAD catalog id.
+
+### Parameters
+None
+
+### Example URL
+```
+curl -s http://localhost:8080/v2/satellites
+```
+
+### Example Response
+```
 [
   {
     "name": "iss",
@@ -33,32 +56,22 @@ $ curl -s localhost:8080/v2/satellites | jq .
 ]
 ```
 
-Refresh the ISS TLE file:
+__GET /satellites/[id]__
 
-```
-$ curl -s -X POST "localhost:8080/v2/satellites/25544/tle/refresh" | jq -r .
-{
-  "tle_timestamp": 1590154259,
-  "header": "ISS (ZARYA)             ",
-  "line1": "1 25544U 98067A   20143.56318382  .00000454  00000-0  16202-4 0  9994",
-  "line2": "2 25544  51.6434 115.2941 0001418 343.5417 126.5978 15.49381561228046"
-}
-```
+Returns position, velocity, and other related information about a satellite for a given point in time. `[id]` is required and should be the NORAD catalog id. For the ISS, that id is 25544.
 
-Backfill the archive for a TLE:
+### Parameters
+| Name   | Description | Required | Default |
+| ------ | ----------- | -------- | ------- |
+| units | Whether to use `miles` or `kilometers` | no | `kilometers` |
 
+### Example URL
 ```
-$ time curl -s -X POST "localhost:8080/v2/satellites/25544/tle/backfill"
-{"status":"ok"}
-real	0m6.954s
-user	0m0.006s
-sys	0m0.007s
+curl -s http://localhost:8080/v2/satellites/25544
 ```
 
-And then get the current ISS location:
-
+### Example Response
 ```
-$ curl -s "localhost:8080/v2/satellites/25544" | jq -r .
 {
   "name": "iss",
   "id": 25544,
@@ -76,19 +89,84 @@ $ curl -s "localhost:8080/v2/satellites/25544" | jq -r .
 }
 ```
 
-You can also pull down a TLE file:
+__GET /satellites/[id]/tle__
 
+Returns the TLE data for a given satellite in either `json` or `text` format
+
+### Parameters
+| Name   | Description | Required | Default |
+| ------ | ----------- | -------- | ------- |
+| format | response format, can be `json` or `text` | no | `json` |
+
+### Example URL
 ```
-$ curl -s "localhost:8080/v2/satellites/25544/tle?format=text"
+curl -s http://localhost:8080/v2/satellites/25544/tle?format=text
+```
+
+### Example Response
+```
 ISS (ZARYA)
 1 25544U 98067A   20143.56318382  .00000454  00000-0  16202-4 0  9994
 2 25544  51.6434 115.2941 0001418 343.5417 126.5978 15.49381561228046
 ```
 
-And get information about coordinates:
+__POST /satellites/[id]/tle/refresh__
 
+Refresh the ISS TLE file from [celestrak](http://celestrak.com).  This should be used at maximum once a day to keep your TLE up to date for a given satellite.
+
+### Parameters
+None
+
+### Example URL
 ```
-$ curl -s localhost:8080/v2/coordinates/37.770061,-122.466157 | jq -r .
+curl -s -X POST http://localhost:8080/v2/satellites/25544/tle/refresh
+```
+
+### Example Response
+```
+{
+  "tle_timestamp": 1590154259,
+  "header": "ISS (ZARYA)             ",
+  "line1": "1 25544U 98067A   20143.56318382  .00000454  00000-0  16202-4 0  9994",
+  "line2": "2 25544  51.6434 115.2941 0001418 343.5417 126.5978 15.49381561228046"
+}
+```
+
+__POST /satellites/[id]/tle/backfill__
+
+Backfill all historical TLEs from [celestrak](http://celestrak.com) for a given satellite.  __This should only be called once__.
+
+NOTE: it may take 10 seconds or so to complete.
+
+### Parameters
+None
+
+### Example URL
+```
+curl -s -X POST http://localhost:8080/v2/satellites/25544/tle/backfill
+```
+
+### Example Response
+```
+{
+  "status":"ok"
+}
+```
+
+__GET /coordinates/[lat,lon]__
+
+Returns position, current time offset, country code, and timezone id for a given set of coordinates in the format of longitude,latitude.
+
+### Parameters
+None
+
+### Example URL
+```
+curl -s http://localhost:8080/v2/coordinates/37.770061,-122.466157
+```
+
+### Example Response
+```
 {
   "latitude": "37.770061",
   "longitude": "-122.466157",
