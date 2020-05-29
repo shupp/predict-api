@@ -1,9 +1,9 @@
 # Overview
-PredictPHP is a REST API for the [Predict](https://github.com/shupp/Predict) library.  It is written in the [lumen](https://lumen.laravel.com) framework, and is available via docker container.
+PredictPHP is a REST API for the [Predict](https://github.com/shupp/Predict) library.  It is written in the [lumen](https://lumen.laravel.com) framework, and is available via docker container.  [TLE](https://en.wikipedia.org/wiki/Two-line_element_set) data is provided courtesy of [CelesTrak](http://celestrak.com).
 
 [Predict](https://github.com/shupp/Predict), a PHP port of [gpredict](http://gpredict.oz9aec.net), allows you to do determine the position of a satellite (such as the International Space Station) as viewed from a given location.
 
-## Example usage
+## Building and Running
 
 Build the predictphp/api image
 
@@ -34,7 +34,6 @@ mysql-seed-client_1  | Adding timezones shapefile to db
 
 ## Endpoints
 
----
 ### GET /satellites
 
 This endpoint returns a list of satellites that this API has information about, inluding a common name and NORAD catalog id.
@@ -116,7 +115,7 @@ ISS (ZARYA)
 ---
 ### POST /satellites/[id]/tle/refresh
 
-Refresh the ISS TLE file from [celestrak](http://celestrak.com).  This should be used at maximum once a day to keep your TLE up to date for a given satellite.
+Refresh the ISS TLE file from [CelesTrak](http://celestrak.com).  This should be used at maximum once a day to keep your TLE up to date for a given satellite.
 
 #### Parameters
 None
