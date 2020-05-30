@@ -36,10 +36,32 @@ mysql-seed-client_1  | Creating tables:
 mysql-seed-client_1  | done.
 mysql-seed-client_1  | Populating tables:
 mysql-seed-client_1  | Adding timezones shapefile to db
+mysql-seed-client_1  | 0...10...20...30...40...50...60...70...80...90...100 - done.
+mysql-seed-client_1  | done
+predict-api_mysql-seed-client_1 exited with code 0
+```
+
+Alternatively, you can use the `wait-until-api-ready` target:
+```
+$ make wait-until-api-ready
+Waiting for API to be ready ...
+Waiting ...
+Waiting ...
+Waiting ...
+Waiting ...
+Done.
+```
+
+Lastly, you can use a series of `make` targets to chain together starting up from scratch after building:
+
+```
+make up wait-until-api-ready open-map
 ```
 
 ## Endpoints
+Below are the current endpoints supported.  Note that the API version is `2`, and paths will need to be prefixed with `/v2`.
 
+---
 ### GET /satellites
 
 This endpoint returns a list of satellites that this API has information about, inluding a common name and NORAD catalog id.
