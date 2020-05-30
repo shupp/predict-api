@@ -192,23 +192,22 @@ class ApiController extends Controller
         if ($units == 'miles') {
             $satAlt    = $sat->alt  * \Predict::km2mi;
             $velocity  = $velocity  * \Predict::km2mi;
-            $footprint = $footprint * \Predict::km2mi;
         }
 
         $data = array(
-            'name'      => $this->_satellites[$id]['name'],
-            'id'        => $this->_satellites[$id]['id'],
-            'latitude'  => $sat->ssplat,
-            'longitude' => $sat->ssplon,
-            'altitude'  => $satAlt,
-            'velocity'  => $velocity,
-            'visbility' => $vis,
-            'footprint' => $footprint,
-            'timestamp' => $timestamp,
-            'daynum'    => $daynum,
-            'solar_lat' => $solarlat,
-            'solar_lon' => $solarlon,
-            'units'     => $units
+            'name'       => $this->_satellites[$id]['name'],
+            'id'         => $this->_satellites[$id]['id'],
+            'latitude'   => $sat->ssplat,
+            'longitude'  => $sat->ssplon,
+            'altitude'   => $satAlt,
+            'velocity'   => $velocity,
+            'visibility' => $vis,
+            'footprint'  => $footprint,
+            'timestamp'  => $timestamp,
+            'daynum'     => $daynum,
+            'solar_lat'  => $solarlat,
+            'solar_lon'  => $solarlon,
+            'units'      => $units
         );
 
         return $data;
