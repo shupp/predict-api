@@ -60,3 +60,6 @@ run-bash:
 
 mysql-client:
 	mysql -u $(DB_USERNAME) -p$(DB_PASSWORD) -P$(DB_PORT) -h 127.0.0.1 $(DB_DATABASE)
+
+open-map:
+	open examples/leafletjs/index.html
