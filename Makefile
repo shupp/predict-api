@@ -9,7 +9,7 @@ DB_USERNAME := root
 DB_PASSWORD := password
 
 help:
-	@grep '^[^#[:space:]].*:' Makefile \
+	@grep '^[^#[:space:]]\+:' Makefile \
 		| awk -F: '{ print $$1 }' \
 		| sort
 
