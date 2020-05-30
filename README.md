@@ -1,5 +1,11 @@
 # Overview
+
+![LeafletJS Integration Example Image](examples/images/leafletjs.png?raw=true)
+
+
 PredictPHP is a REST API for the [Predict](https://github.com/shupp/Predict) library.  It is written in the [lumen](https://lumen.laravel.com) framework, and is available via docker container.  [TLE](https://en.wikipedia.org/wiki/Two-line_element_set) data is provided courtesy of [CelesTrak](http://celestrak.com).
+
+There is an example integration with [Leaflet](https://leafletjs.com) [here](examples/leafletjs) (see the image above).
 
 [Predict](https://github.com/shupp/Predict), a PHP port of [gpredict](http://gpredict.oz9aec.net), allows you to do determine the position of a satellite (such as the International Space Station) as viewed from a given location.
 
