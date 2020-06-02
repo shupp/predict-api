@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-	
-	<title>Quick Start - Leaflet</title>
 
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	
+    <title>LeafletJS example for Predict API</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <!-- bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-	
+
 </head>
 <body>
 
 
 
 <div id="mapid" style="position: absolute; top: 0; bottom: 0; width: 100%;">
-<!--<div id="mapid" style="height: 700px; width: 100%;"></div>-->
 <div id="stats-container" class="leaflet-control" style="float: right; overflow: auto">
     <table class="table table-dark" style="background-color: rgba(0, 0, 0, 0.8);">
       <tbody>
@@ -49,32 +48,33 @@
 
 <script>
 
-	var mymap = L.map('mapid').setView([51.505, -0.09], 4);
+    var startingDummyLocation = new L.LatLng(37.616273, -122.379311);
+    var myMap = L.map('mapid').setView(startingDummyLocation, 4);
 
-	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-		maxZoom: 18,
-		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-		id: 'mapbox/streets-v11',
-		tileSize: 512,
-		zoomOffset: -1
-	}).addTo(mymap);
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+            '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        id: 'mapbox/streets-v11',
+        tileSize: 512,
+        zoomOffset: -1
+    }).addTo(myMap);
 
     var myIcon = L.icon({
         iconUrl: 'images/iss.png',
         iconSize: [168, 120]
     });
-    var myMarker = L.marker([51.5, -0.09], {icon: myIcon});
+    var mySatLocation = L.marker(startingDummyLocation, {icon: myIcon});
 
     var mySunIcon = L.icon({
         iconUrl: 'images/sun.png',
         iconSize: [40, 40]
     });
-    var mySunMarker = L.marker([51.5, -0.09], {icon: mySunIcon});
+    var mySunMarker = L.marker(startingDummyLocation, {icon: mySunIcon});
 
     var myFootprint = L.circle(
-        new L.LatLng(51.5, -0.09),
+        new L.LatLng(startingDummyLocation.lat, startingDummyLocation.lng),
         {
             radius: 4500 * 1000,
             color: "white",
@@ -84,7 +84,7 @@
     );
 
     var mySolarTerminator = L.circle(
-        new L.LatLng(51.5, -0.09),
+        new L.LatLng(startingDummyLocation.lat, startingDummyLocation.lng),
         {
             radius: 10018790,
             opacity: 0.2,
@@ -94,60 +94,55 @@
         }
     );
 
-    mySolarTerminator.addTo(mymap);
-    myFootprint.addTo(mymap);
-    mySunMarker.addTo(mymap);
-    myMarker.addTo(mymap);
+    mySolarTerminator.addTo(myMap);
+    myFootprint.addTo(myMap);
+    mySunMarker.addTo(myMap);
+    mySatLocation.addTo(myMap);
 
 
-	var popup = L.popup();
+    var popup = L.popup();
 
-	function onMapClick(e) {
-		popup
-			.setLatLng(e.latlng)
-			.setContent("You clicked the map at " + e.latlng.toString())
-			.openOn(mymap);
-	}
+    function onMapClick(e) {
+        popup
+            .setLatLng(e.latlng)
+            .setContent("You clicked the map at " + e.latlng.toString())
+            .openOn(myMap);
+    }
 
-	mymap.on('click', onMapClick);
-
-    var pause_iss = false;
+    myMap.on('click', onMapClick);
 
     function issUpdate() {
-        if (!pause_iss) {
-            $.ajax({
-                url: 'http://localhost:8080/v2/satellites/25544?units=kilometers',
-                timeout: 900,
-                success: function(response) {
-                    console.log(response);
-                    var units = (response.units == "miles") ? "mph" : "kph";
-                    $('#sat_name').html(response.name);
-                    $('#velocity').html(Math.round(response.velocity).toLocaleString() + " " + units);
-                    $('#latitude').html(response.latitude);
-                    $('#longitude').html(response.longitude);
-                    $('#altitude').html(response.altitude.toFixed(2) + " " + response.units);
-                    $('#visibility').html(response.visibility);
+        $.ajax({
+            url: 'http://localhost:8080/v2/satellites/25544?units=kilometers',
+            timeout: 900,
+            success: function(response) {
+                var units = (response.units == "miles") ? "mph" : "kph";
+                $('#sat_name').html(response.name);
+                $('#velocity').html(Math.round(response.velocity).toLocaleString() + " " + units);
+                $('#latitude').html(response.latitude);
+                $('#longitude').html(response.longitude);
+                $('#altitude').html(response.altitude.toFixed(2) + " " + response.units);
+                $('#visibility').html(response.visibility);
 
-                    myFootprint.setRadius((response.footprint * 1000) / 2);
+                myFootprint.setRadius((response.footprint * 1000) / 2);
 
-                    newLatLon = new L.LatLng(response.latitude, response.longitude);
-                    myMarker.setLatLng(newLatLon);
-                    myFootprint.setLatLng(newLatLon);
+                var newPosition = new L.LatLng(response.latitude, response.longitude);
+                mySatLocation.setLatLng(newPosition);
+                myFootprint.setLatLng(newPosition);
 
-                    var darkLon;
-                    if (response.solar_lon < 0) {
-                        darkLon = 180 + response.solar_lon;
-                    } else {
-                        darkLon = response.solar_lon - 180;
-                    }
-
-                    mySolarTerminator.setLatLng(new L.LatLng(-response.solar_lat, darkLon));
-                    mySunMarker.setLatLng(new L.LatLng(response.solar_lat, response.solar_lon));
-
-                    mymap.panTo(newLatLon);
+                var darkLon;
+                if (response.solar_lon < 0) {
+                    darkLon = 180 + response.solar_lon;
+                } else {
+                    darkLon = response.solar_lon - 180;
                 }
-            });
-        }
+
+                mySolarTerminator.setLatLng(new L.LatLng(-response.solar_lat, darkLon));
+                mySunMarker.setLatLng(new L.LatLng(response.solar_lat, response.solar_lon));
+
+                myMap.panTo(newPosition);
+            }
+        });
 
         t = setTimeout(issUpdate, 1000);
     };
