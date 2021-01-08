@@ -2,30 +2,31 @@
 
 namespace Laravel\Lumen\Console;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Queue\Console\TableCommand;
 use Illuminate\Auth\Console\ClearResetsCommand;
 use Illuminate\Cache\Console\CacheTableCommand;
-use Illuminate\Queue\Console\FailedTableCommand;
+use Illuminate\Cache\Console\ClearCommand as CacheClearCommand;
+use Illuminate\Cache\Console\ForgetCommand as CacheForgetCommand;
+use Illuminate\Database\Console\Migrations\FreshCommand as MigrateFreshCommand;
+use Illuminate\Database\Console\Migrations\InstallCommand as MigrateInstallCommand;
+use Illuminate\Database\Console\Migrations\MigrateCommand;
+use Illuminate\Database\Console\Migrations\MigrateMakeCommand;
+use Illuminate\Database\Console\Migrations\RefreshCommand as MigrateRefreshCommand;
+use Illuminate\Database\Console\Migrations\ResetCommand as MigrateResetCommand;
+use Illuminate\Database\Console\Migrations\RollbackCommand as MigrateRollbackCommand;
+use Illuminate\Database\Console\Migrations\StatusCommand as MigrateStatusCommand;
 use Illuminate\Database\Console\Seeds\SeedCommand;
 use Illuminate\Database\Console\Seeds\SeederMakeCommand;
-use Illuminate\Database\Console\Migrations\MigrateCommand;
-use Illuminate\Queue\Console\WorkCommand as QueueWorkCommand;
-use Illuminate\Database\Console\Migrations\MigrateMakeCommand;
-use Illuminate\Cache\Console\ClearCommand as CacheClearCommand;
-use Illuminate\Queue\Console\RetryCommand as QueueRetryCommand;
-use Illuminate\Cache\Console\ForgetCommand as CacheForgetCommand;
-use Illuminate\Queue\Console\ListenCommand as QueueListenCommand;
-use Illuminate\Queue\Console\RestartCommand as QueueRestartCommand;
-use Illuminate\Queue\Console\ListFailedCommand as ListFailedQueueCommand;
+use Illuminate\Database\Console\WipeCommand;
+use Illuminate\Queue\Console\FailedTableCommand;
 use Illuminate\Queue\Console\FlushFailedCommand as FlushFailedQueueCommand;
 use Illuminate\Queue\Console\ForgetFailedCommand as ForgetFailedQueueCommand;
-use Illuminate\Database\Console\Migrations\FreshCommand as MigrateFreshCommand;
-use Illuminate\Database\Console\Migrations\ResetCommand as MigrateResetCommand;
-use Illuminate\Database\Console\Migrations\StatusCommand as MigrateStatusCommand;
-use Illuminate\Database\Console\Migrations\InstallCommand as MigrateInstallCommand;
-use Illuminate\Database\Console\Migrations\RefreshCommand as MigrateRefreshCommand;
-use Illuminate\Database\Console\Migrations\RollbackCommand as MigrateRollbackCommand;
+use Illuminate\Queue\Console\ListenCommand as QueueListenCommand;
+use Illuminate\Queue\Console\ListFailedCommand as ListFailedQueueCommand;
+use Illuminate\Queue\Console\RestartCommand as QueueRestartCommand;
+use Illuminate\Queue\Console\RetryCommand as QueueRetryCommand;
+use Illuminate\Queue\Console\TableCommand;
+use Illuminate\Queue\Console\WorkCommand as QueueWorkCommand;
+use Illuminate\Support\ServiceProvider;
 
 class ConsoleServiceProvider extends ServiceProvider
 {
@@ -53,6 +54,7 @@ class ConsoleServiceProvider extends ServiceProvider
         'QueueRetry' => 'command.queue.retry',
         'QueueWork' => 'command.queue.work',
         'Seed' => 'command.seed',
+        'Wipe' => 'command.wipe',
         'ScheduleFinish' => 'Illuminate\Console\Scheduling\ScheduleFinishCommand',
         'ScheduleRun' => 'Illuminate\Console\Scheduling\ScheduleRunCommand',
     ];
@@ -303,8 +305,8 @@ class ConsoleServiceProvider extends ServiceProvider
      */
     protected function registerQueueRestartCommand()
     {
-        $this->app->singleton('command.queue.restart', function () {
-            return new QueueRestartCommand;
+        $this->app->singleton('command.queue.restart', function ($app) {
+            return new QueueRestartCommand($app['cache.store']);
         });
     }
 
@@ -328,7 +330,7 @@ class ConsoleServiceProvider extends ServiceProvider
     protected function registerQueueWorkCommand()
     {
         $this->app->singleton('command.queue.work', function ($app) {
-            return new QueueWorkCommand($app['queue.worker']);
+            return new QueueWorkCommand($app['queue.worker'], $app['cache.store']);
         });
     }
 
@@ -377,6 +379,18 @@ class ConsoleServiceProvider extends ServiceProvider
     {
         $this->app->singleton('command.seed', function ($app) {
             return new SeedCommand($app['db']);
+        });
+    }
+
+    /**
+     * Register the command.
+     *
+     * @return void
+     */
+    protected function registerWipeCommand()
+    {
+        $this->app->singleton('command.wipe', function ($app) {
+            return new WipeCommand($app['db']);
         });
     }
 

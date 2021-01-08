@@ -2,10 +2,10 @@
 
 namespace Laravel\Lumen\Testing;
 
-use Mockery;
 use Exception;
-use Illuminate\Support\Facades\Facade;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\Facade;
+use Mockery;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
@@ -49,13 +49,11 @@ abstract class TestCase extends BaseTestCase
      */
     protected function refreshApplication()
     {
-        putenv('APP_ENV=testing');
-
         Facade::clearResolvedInstances();
 
         $this->app = $this->createApplication();
 
-        $url = $this->app->make('config')->get('app.url', env('APP_URL', 'http://localhost'));
+        $url = $this->app->make('config')->get('app.url', 'http://localhost');
 
         $this->app->make('url')->forceRootUrl($url);
 
@@ -306,8 +304,8 @@ abstract class TestCase extends BaseTestCase
     /**
      * Call artisan command and return code.
      *
-     * @param string  $command
-     * @param array   $parameters
+     * @param  string  $command
+     * @param  array  $parameters
      * @return int
      */
     public function artisan($command, $parameters = [])

@@ -1,19 +1,19 @@
 <?php
 
 use Illuminate\Container\Container;
-use Laravel\Lumen\Bus\PendingDispatch;
+use Illuminate\Contracts\Auth\Factory as AuthFactory;
+use Illuminate\Contracts\Broadcasting\Factory as BroadcastFactory;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use Symfony\Component\Debug\Exception\FatalThrowableError;
-use Illuminate\Contracts\Broadcasting\Factory as BroadcastFactory;
+use Laravel\Lumen\Bus\PendingDispatch;
 
 if (! function_exists('abort')) {
     /**
      * Throw an HttpException with the given data.
      *
-     * @param  int     $code
+     * @param  int  $code
      * @param  string  $message
-     * @param  array   $headers
+     * @param  array  $headers
      * @return void
      *
      * @throws \Symfony\Component\HttpKernel\Exception\HttpException
@@ -40,6 +40,23 @@ if (! function_exists('app')) {
         }
 
         return Container::getInstance()->make($make, $parameters);
+    }
+}
+
+if (! function_exists('auth')) {
+    /**
+     * Get the available auth instance.
+     *
+     * @param  string|null  $guard
+     * @return \Illuminate\Contracts\Auth\Factory|\Illuminate\Contracts\Auth\Guard|\Illuminate\Contracts\Auth\StatefulGuard
+     */
+    function auth($guard = null)
+    {
+        if (is_null($guard)) {
+            return app(AuthFactory::class);
+        }
+
+        return app(AuthFactory::class)->guard($guard);
     }
 }
 
@@ -164,8 +181,8 @@ if (! function_exists('event')) {
      * Dispatch an event and call the listeners.
      *
      * @param  object|string  $event
-     * @param  mixed   $payload
-     * @param  bool    $halt
+     * @param  mixed  $payload
+     * @param  bool  $halt
      * @return array|null
      */
     function event($event, $payload = [], $halt = false)
@@ -204,7 +221,7 @@ if (! function_exists('info')) {
      * Write some information to the log.
      *
      * @param  string  $message
-     * @param  array   $context
+     * @param  array  $context
      * @return void
      */
     function info($message, $context = [])
@@ -242,13 +259,8 @@ if (! function_exists('report')) {
      * @param  \Throwable  $exception
      * @return void
      */
-    function report($exception)
+    function report(Throwable $exception)
     {
-        if ($exception instanceof Throwable &&
-            ! $exception instanceof Exception) {
-            $exception = new FatalThrowableError($exception);
-        }
-
         app(ExceptionHandler::class)->report($exception);
     }
 }
@@ -271,8 +283,8 @@ if (! function_exists('response')) {
      * Return a new response from the application.
      *
      * @param  string  $content
-     * @param  int     $status
-     * @param  array   $headers
+     * @param  int  $status
+     * @param  array  $headers
      * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
      */
     function response($content = '', $status = 200, array $headers = [])
@@ -320,7 +332,7 @@ if (! function_exists('trans')) {
      * Translate the given message.
      *
      * @param  string|null  $id
-     * @param  array   $replace
+     * @param  array  $replace
      * @param  string|null  $locale
      * @return \Illuminate\Contracts\Translation\Translator|string|array|null
      */
@@ -330,7 +342,7 @@ if (! function_exists('trans')) {
             return app('translator');
         }
 
-        return app('translator')->trans($id, $replace, $locale);
+        return app('translator')->get($id, $replace, $locale);
     }
 }
 
@@ -345,7 +357,7 @@ if (! function_exists('__')) {
      */
     function __($key, $replace = [], $locale = null)
     {
-        return app('translator')->getFromJson($key, $replace, $locale);
+        return app('translator')->get($key, $replace, $locale);
     }
 }
 
@@ -361,7 +373,7 @@ if (! function_exists('trans_choice')) {
      */
     function trans_choice($id, $number, array $replace = [], $locale = null)
     {
-        return app('translator')->transChoice($id, $number, $replace, $locale);
+        return app('translator')->choice($id, $number, $replace, $locale);
     }
 }
 
