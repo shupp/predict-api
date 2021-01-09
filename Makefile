@@ -104,3 +104,6 @@ refresh-iss-tle:
 backfill-iss-tles:
 	@echo "Backfilling the ISS tle data from CelesTrak ..."
 	curl -s -X POST http://localhost:8080/v2/satellites/25544/tle/backfill | jq -r .
+
+coordinates-%:
+	curl -s http://localhost:8080/v2/coordinates/$(*) | jq -r .
