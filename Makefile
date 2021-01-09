@@ -100,3 +100,7 @@ wait-until-api-ready:
 refresh-iss-tle:
 	@echo "Refreshing the ISS tle from CelesTrak ..."
 	curl -s -X POST http://localhost:8080/v2/satellites/25544/tle/refresh | jq -r .
+
+backfill-iss-tles:
+	@echo "Backfilling the ISS tle data from CelesTrak ..."
+	curl -s -X POST http://localhost:8080/v2/satellites/25544/tle/backfill | jq -r .
