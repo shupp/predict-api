@@ -326,7 +326,7 @@ class ApiController extends Controller
 
         // Run query
         $tzId  = null;
-        $query = "SELECT tzid FROM combined_shapefile WHERE ST_Contains(SHAPE, POINT(?, ?)) LIMIT 1";
+        $query = "SELECT tzid FROM combined_shapefile_with_oceans WHERE ST_Contains(SHAPE, POINT(?, ?)) LIMIT 1";
         $results = app('db')->select($query, [$lon, $lat]);
 
         if (!count($results)) {
@@ -368,8 +368,9 @@ class ApiController extends Controller
 
     public function healthCheck() {
         try {
-            $results = app('db')->select("select count(*) as count from combined_shapefile;");
-            if ($results[0]->count != '426') {
+            $results = app('db')->select("select count(*) as count from combined_shapefile_with_oceans;");
+            // This is a bit brittle, let's say above 430 for now
+            if ((int)$results[0]->count >= '430') {
                 $payload = ['status' => 'error', 'message' => 'db not ready'];
                 return $payload;
             }
