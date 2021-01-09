@@ -55,6 +55,15 @@ bash:
 	DB_PASSWORD=$(DB_PASSWORD) \
 	docker-compose exec api bash -o vi
 
+bash-db:
+	DB_HOST=$(DB_HOST) \
+	DB_PORT=$(DB_PORT) \
+	DB_DATABASE=$(DB_DATABASE) \
+	DB_USERNAME=$(DB_USERNAME) \
+	DB_PASSWORD=$(DB_PASSWORD) \
+	SECRET_DB_PASS=$(DB_PASSWORD) \
+	docker-compose exec mysql bash -o vi
+
 
 ## HELPERS ##
 # Start the api contiainer on its own with just a shell

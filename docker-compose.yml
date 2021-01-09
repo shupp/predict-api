@@ -53,9 +53,11 @@ services:
       - target: "3306"
         published: "3306"
         protocol: "tcp"
-    image: mariadb:latest
+    # image: mariadb:latest
+    image: predictphp/mariadb-timezone-data:latest
     environment:
        MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
        MYSQL_DATABASE: "${DB_DATABASE}"
        MYSQL_USER: "${DB_USERNAME}"
        MYSQL_PASSWORD: "${DB_PASSWORD}"
+       SECRET_DB_PASS: "${DB_PASSWORD}"
