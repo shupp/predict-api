@@ -64,7 +64,7 @@ fi
 
 printf "Adding timezones shapefile to db\n"
 ogr2ogr -progress -lco engine=MYISAM -f MySQL \
-    MySQL:${DB_NAME},user=${DB_USER},password=${SECRET_DB_PASS},host=${DB_ADDR} /dist/combined-shapefile.shp
+    MySQL:${DB_NAME},user=${DB_USER},password=${SECRET_DB_PASS},host=${DB_ADDR} /combined-shapefile.shp
 
 printf "done\n"
 
