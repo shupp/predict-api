@@ -9,6 +9,8 @@ There is an example integration with [Leaflet](https://leafletjs.com) [here](exa
 
 [Predict](https://github.com/shupp/Predict), a PHP port of [gpredict](http://gpredict.oz9aec.net), allows you to do determine the position of a satellite (such as the International Space Station) as viewed from a given location.
 
+The coordinates endpoints rely on shapefiles built by [timezone-boundary-builder](https://github.com/evansiroky/timezone-boundary-builder). The database is [mariadb](https://mariadb.org).
+
 ## Building and Running
 
 Build the predictphp/api image
