@@ -50,7 +50,7 @@ services:
     networks:
       - predict_net
     ports:
-      - target: "3306"
+      - target: 3306
         published: "3306"
         protocol: "tcp"
     # image: mariadb:latest
