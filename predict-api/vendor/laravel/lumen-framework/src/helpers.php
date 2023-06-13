@@ -21,7 +21,7 @@ if (! function_exists('abort')) {
      */
     function abort($code, $message = '', array $headers = [])
     {
-        return app()->abort($code, $message, $headers);
+        app()->abort($code, $message, $headers);
     }
 }
 
@@ -191,31 +191,6 @@ if (! function_exists('event')) {
     }
 }
 
-if (! function_exists('factory')) {
-    /**
-     * Create a model factory builder for a given class, name, and amount.
-     *
-     * @param  dynamic  class|class,name|class,amount|class,name,amount
-     * @return \Illuminate\Database\Eloquent\FactoryBuilder
-     */
-    function factory()
-    {
-        app('db');
-
-        $factory = app('Illuminate\Database\Eloquent\Factory');
-
-        $arguments = func_get_args();
-
-        if (isset($arguments[1]) && is_string($arguments[1])) {
-            return $factory->of($arguments[0], $arguments[1])->times($arguments[2] ?? null);
-        } elseif (isset($arguments[1])) {
-            return $factory->of($arguments[0])->times($arguments[1]);
-        } else {
-            return $factory->of($arguments[0]);
-        }
-    }
-}
-
 if (! function_exists('info')) {
     /**
      * Write some information to the log.
@@ -262,6 +237,30 @@ if (! function_exists('report')) {
     function report(Throwable $exception)
     {
         app(ExceptionHandler::class)->report($exception);
+    }
+}
+
+if (! function_exists('request')) {
+    /**
+     * Get an instance of the current request or an input item from the request.
+     *
+     * @param  array|string|null  $key
+     * @param  mixed  $default
+     * @return \Illuminate\Http\Request|string|array
+     */
+    function request($key = null, $default = null)
+    {
+        if (is_null($key)) {
+            return app('request');
+        }
+
+        if (is_array($key)) {
+            return app('request')->only($key);
+        }
+
+        $value = app('request')->__get($key);
+
+        return is_null($value) ? value($default) : $value;
     }
 }
 

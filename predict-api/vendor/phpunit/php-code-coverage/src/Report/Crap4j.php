@@ -17,16 +17,13 @@ use function is_string;
 use function round;
 use DOMDocument;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
-use SebastianBergmann\CodeCoverage\Directory;
 use SebastianBergmann\CodeCoverage\Driver\WriteOperationFailedException;
 use SebastianBergmann\CodeCoverage\Node\File;
+use SebastianBergmann\CodeCoverage\Util\Filesystem;
 
 final class Crap4j
 {
-    /**
-     * @var int
-     */
-    private $threshold;
+    private readonly int $threshold;
 
     public function __construct(int $threshold = 30)
     {
@@ -124,7 +121,7 @@ final class Crap4j
         $buffer = $document->saveXML();
 
         if ($target !== null) {
-            Directory::create(dirname($target));
+            Filesystem::createDirectory(dirname($target));
 
             if (@file_put_contents($target, $buffer) === false) {
                 throw new WriteOperationFailedException($target);

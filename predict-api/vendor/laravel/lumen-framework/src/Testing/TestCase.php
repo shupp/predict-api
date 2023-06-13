@@ -4,7 +4,9 @@ namespace Laravel\Lumen\Testing;
 
 use Exception;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\Facade;
+use Illuminate\View\Component;
 use Mockery;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 
@@ -117,12 +119,16 @@ abstract class TestCase extends BaseTestCase
 
         if ($this->app) {
             foreach ($this->beforeApplicationDestroyedCallbacks as $callback) {
-                call_user_func($callback);
+                $callback();
             }
 
             $this->app->flush();
             $this->app = null;
         }
+
+        Component::flushCache();
+        Component::forgetComponentsResolver();
+        Component::forgetFactory();
     }
 
     /**
@@ -130,7 +136,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @param  string  $table
      * @param  array  $data
-     * @param  string|null $onConnection
+     * @param  string|null  $onConnection
      * @return $this
      */
     protected function seeInDatabase($table, array $data, $onConnection = null)
@@ -149,7 +155,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @param  string  $table
      * @param  array  $data
-     * @param  string|null $onConnection
+     * @param  string|null  $onConnection
      * @return $this
      */
     protected function missingFromDatabase($table, array $data, $onConnection = null)
@@ -162,7 +168,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @param  string  $table
      * @param  array  $data
-     * @param  string|null $onConnection
+     * @param  string|null  $onConnection
      * @return $this
      */
     protected function notSeeInDatabase($table, array $data, $onConnection = null)
@@ -188,7 +194,7 @@ abstract class TestCase extends BaseTestCase
     {
         $events = is_array($events) ? $events : func_get_args();
 
-        $mock = Mockery::spy('Illuminate\Contracts\Events\Dispatcher');
+        $mock = Mockery::spy(\Illuminate\Contracts\Events\Dispatcher::class);
 
         $mock->shouldReceive('dispatch')->andReturnUsing(function ($called) use (&$events) {
             foreach ($events as $key => $event) {
@@ -220,7 +226,7 @@ abstract class TestCase extends BaseTestCase
      */
     protected function withoutEvents()
     {
-        $mock = Mockery::mock('Illuminate\Contracts\Events\Dispatcher');
+        $mock = Mockery::mock(\Illuminate\Contracts\Events\Dispatcher::class);
 
         $mock->shouldReceive('dispatch');
 
@@ -249,7 +255,7 @@ abstract class TestCase extends BaseTestCase
         }
 
         $this->app->instance(
-            'Illuminate\Contracts\Bus\Dispatcher', $mock
+            \Illuminate\Contracts\Bus\Dispatcher::class, $mock
         );
 
         return $this;
@@ -269,7 +275,7 @@ abstract class TestCase extends BaseTestCase
         });
 
         $this->app->instance(
-            'Illuminate\Contracts\Bus\Dispatcher', $mock
+            \Illuminate\Contracts\Bus\Dispatcher::class, $mock
         );
 
         return $this;
@@ -310,7 +316,7 @@ abstract class TestCase extends BaseTestCase
      */
     public function artisan($command, $parameters = [])
     {
-        return $this->code = $this->app['Illuminate\Contracts\Console\Kernel']->call($command, $parameters);
+        return $this->code = $this->app[Kernel::class]->call($command, $parameters);
     }
 
     /**

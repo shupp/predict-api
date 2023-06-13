@@ -17,26 +17,26 @@ use function dirname;
 use function explode;
 use function implode;
 use function is_file;
+use function str_ends_with;
 use function str_replace;
-use function strpos;
+use function str_starts_with;
 use function substr;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
-use SebastianBergmann\CodeCoverage\ProcessedCodeCoverageData;
-use SebastianBergmann\CodeCoverage\StaticAnalysis\CoveredFileAnalyser;
+use SebastianBergmann\CodeCoverage\Data\ProcessedCodeCoverageData;
+use SebastianBergmann\CodeCoverage\StaticAnalysis\FileAnalyser;
 
 /**
  * @internal This class is not covered by the backward compatibility promise for phpunit/php-code-coverage
+ *
+ * @psalm-import-type TestType from \SebastianBergmann\CodeCoverage\CodeCoverage
  */
 final class Builder
 {
-    /**
-     * @var CoveredFileAnalyser
-     */
-    private $coveredFileAnalyser;
+    private readonly FileAnalyser $analyser;
 
-    public function __construct(CoveredFileAnalyser $coveredFileAnalyser)
+    public function __construct(FileAnalyser $analyser)
     {
-        $this->coveredFileAnalyser = $coveredFileAnalyser;
+        $this->analyser = $analyser;
     }
 
     public function build(CodeCoverage $coverage): Directory
@@ -57,12 +57,15 @@ final class Builder
         return $root;
     }
 
+    /**
+     * @psalm-param array<string, TestType> $tests
+     */
     private function addItems(Directory $root, array $items, array $tests): void
     {
         foreach ($items as $key => $value) {
             $key = (string) $key;
 
-            if (substr($key, -2) === '/f') {
+            if (str_ends_with($key, '/f')) {
                 $key      = substr($key, 0, -2);
                 $filename = $root->pathAsString() . DIRECTORY_SEPARATOR . $key;
 
@@ -74,10 +77,10 @@ final class Builder
                             $value['lineCoverage'],
                             $value['functionCoverage'],
                             $tests,
-                            $this->coveredFileAnalyser->classesIn($filename),
-                            $this->coveredFileAnalyser->traitsIn($filename),
-                            $this->coveredFileAnalyser->functionsIn($filename),
-                            $this->coveredFileAnalyser->linesOfCodeFor($filename)
+                            $this->analyser->classesIn($filename),
+                            $this->analyser->traitsIn($filename),
+                            $this->analyser->functionsIn($filename),
+                            $this->analyser->linesOfCodeFor($filename)
                         )
                     );
                 }
@@ -128,6 +131,8 @@ final class Builder
      *         )
      * )
      * </code>
+     *
+     * @psalm-return array<string, array<string, array{lineCoverage: array<int, int>, functionCoverage: array<string, array<int, int>>}>>
      */
     private function buildDirectoryStructure(ProcessedCodeCoverageData $data): array
     {
@@ -214,7 +219,7 @@ final class Builder
 
         for ($i = 0; $i < $max; $i++) {
             // strip phar:// prefixes
-            if (strpos($paths[$i], 'phar://') === 0) {
+            if (str_starts_with($paths[$i], 'phar://')) {
                 $paths[$i] = substr($paths[$i], 7);
                 $paths[$i] = str_replace('/', DIRECTORY_SEPARATOR, $paths[$i]);
             }

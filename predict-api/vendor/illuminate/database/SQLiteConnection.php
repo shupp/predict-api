@@ -2,11 +2,13 @@
 
 namespace Illuminate\Database;
 
-use Doctrine\DBAL\Driver\PDOSqlite\Driver as DoctrineDriver;
+use Illuminate\Database\PDO\SQLiteDriver;
 use Illuminate\Database\Query\Grammars\SQLiteGrammar as QueryGrammar;
 use Illuminate\Database\Query\Processors\SQLiteProcessor;
 use Illuminate\Database\Schema\Grammars\SQLiteGrammar as SchemaGrammar;
 use Illuminate\Database\Schema\SQLiteBuilder;
+use Illuminate\Database\Schema\SqliteSchemaState;
+use Illuminate\Filesystem\Filesystem;
 
 class SQLiteConnection extends Connection
 {
@@ -35,13 +37,28 @@ class SQLiteConnection extends Connection
     }
 
     /**
+     * Escape a binary value for safe SQL embedding.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    protected function escapeBinary($value)
+    {
+        $hex = bin2hex($value);
+
+        return "x'{$hex}'";
+    }
+
+    /**
      * Get the default query grammar instance.
      *
      * @return \Illuminate\Database\Query\Grammars\SQLiteGrammar
      */
     protected function getDefaultQueryGrammar()
     {
-        return $this->withTablePrefix(new QueryGrammar);
+        ($grammar = new QueryGrammar)->setConnection($this);
+
+        return $this->withTablePrefix($grammar);
     }
 
     /**
@@ -65,7 +82,22 @@ class SQLiteConnection extends Connection
      */
     protected function getDefaultSchemaGrammar()
     {
-        return $this->withTablePrefix(new SchemaGrammar);
+        ($grammar = new SchemaGrammar)->setConnection($this);
+
+        return $this->withTablePrefix($grammar);
+    }
+
+    /**
+     * Get the schema state for the connection.
+     *
+     * @param  \Illuminate\Filesystem\Filesystem|null  $files
+     * @param  callable|null  $processFactory
+     *
+     * @throws \RuntimeException
+     */
+    public function getSchemaState(Filesystem $files = null, callable $processFactory = null)
+    {
+        return new SqliteSchemaState($this, $files, $processFactory);
     }
 
     /**
@@ -81,11 +113,11 @@ class SQLiteConnection extends Connection
     /**
      * Get the Doctrine DBAL driver.
      *
-     * @return \Doctrine\DBAL\Driver\PDOSqlite\Driver
+     * @return \Illuminate\Database\PDO\SQLiteDriver
      */
     protected function getDoctrineDriver()
     {
-        return new DoctrineDriver;
+        return new SQLiteDriver;
     }
 
     /**

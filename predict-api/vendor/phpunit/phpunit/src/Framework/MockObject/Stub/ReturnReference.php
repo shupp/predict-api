@@ -18,17 +18,14 @@ use SebastianBergmann\Exporter\Exporter;
  */
 final class ReturnReference implements Stub
 {
-    /**
-     * @var mixed
-     */
-    private $reference;
+    private mixed $reference;
 
-    public function __construct(&$reference)
+    public function __construct(mixed &$reference)
     {
         $this->reference = &$reference;
     }
 
-    public function invoke(Invocation $invocation)
+    public function invoke(Invocation $invocation): mixed
     {
         return $this->reference;
     }
@@ -39,7 +36,7 @@ final class ReturnReference implements Stub
 
         return sprintf(
             'return user-specified reference %s',
-            $exporter->export($this->reference)
+            $exporter->export($this->reference),
         );
     }
 }

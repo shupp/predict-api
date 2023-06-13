@@ -2,39 +2,38 @@
 
 namespace Illuminate\Database;
 
-use Doctrine\DBAL\Driver\PDOPgSql\Driver as DoctrineDriver;
+use Illuminate\Database\PDO\PostgresDriver;
 use Illuminate\Database\Query\Grammars\PostgresGrammar as QueryGrammar;
 use Illuminate\Database\Query\Processors\PostgresProcessor;
 use Illuminate\Database\Schema\Grammars\PostgresGrammar as SchemaGrammar;
 use Illuminate\Database\Schema\PostgresBuilder;
-use PDO;
+use Illuminate\Database\Schema\PostgresSchemaState;
+use Illuminate\Filesystem\Filesystem;
 
 class PostgresConnection extends Connection
 {
     /**
-     * Bind values to their parameters in the given statement.
+     * Escape a binary value for safe SQL embedding.
      *
-     * @param  \PDOStatement  $statement
-     * @param  array  $bindings
-     * @return void
+     * @param  string  $value
+     * @return string
      */
-    public function bindValues($statement, $bindings)
+    protected function escapeBinary($value)
     {
-        foreach ($bindings as $key => $value) {
-            if (is_int($value)) {
-                $pdoParam = PDO::PARAM_INT;
-            } elseif (is_resource($value)) {
-                $pdoParam = PDO::PARAM_LOB;
-            } else {
-                $pdoParam = PDO::PARAM_STR;
-            }
+        $hex = bin2hex($value);
 
-            $statement->bindValue(
-                is_string($key) ? $key : $key + 1,
-                $value,
-                $pdoParam
-            );
-        }
+        return "'\x{$hex}'::bytea";
+    }
+
+    /**
+     * Escape a bool value for safe SQL embedding.
+     *
+     * @param  bool  $value
+     * @return string
+     */
+    protected function escapeBool($value)
+    {
+        return $value ? 'true' : 'false';
     }
 
     /**
@@ -44,7 +43,9 @@ class PostgresConnection extends Connection
      */
     protected function getDefaultQueryGrammar()
     {
-        return $this->withTablePrefix(new QueryGrammar);
+        ($grammar = new QueryGrammar)->setConnection($this);
+
+        return $this->withTablePrefix($grammar);
     }
 
     /**
@@ -68,7 +69,21 @@ class PostgresConnection extends Connection
      */
     protected function getDefaultSchemaGrammar()
     {
-        return $this->withTablePrefix(new SchemaGrammar);
+        ($grammar = new SchemaGrammar)->setConnection($this);
+
+        return $this->withTablePrefix($grammar);
+    }
+
+    /**
+     * Get the schema state for the connection.
+     *
+     * @param  \Illuminate\Filesystem\Filesystem|null  $files
+     * @param  callable|null  $processFactory
+     * @return \Illuminate\Database\Schema\PostgresSchemaState
+     */
+    public function getSchemaState(Filesystem $files = null, callable $processFactory = null)
+    {
+        return new PostgresSchemaState($this, $files, $processFactory);
     }
 
     /**
@@ -84,10 +99,10 @@ class PostgresConnection extends Connection
     /**
      * Get the Doctrine DBAL driver.
      *
-     * @return \Doctrine\DBAL\Driver\PDOPgSql\Driver
+     * @return \Illuminate\Database\PDO\PostgresDriver
      */
     protected function getDoctrineDriver()
     {
-        return new DoctrineDriver;
+        return new PostgresDriver;
     }
 }

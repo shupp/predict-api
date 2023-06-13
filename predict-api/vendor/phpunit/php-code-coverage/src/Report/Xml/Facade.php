@@ -28,32 +28,21 @@ use function substr;
 use DateTimeImmutable;
 use DOMDocument;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
-use SebastianBergmann\CodeCoverage\Directory as DirectoryUtil;
 use SebastianBergmann\CodeCoverage\Driver\PathExistsButIsNotDirectoryException;
 use SebastianBergmann\CodeCoverage\Driver\WriteOperationFailedException;
 use SebastianBergmann\CodeCoverage\Node\AbstractNode;
 use SebastianBergmann\CodeCoverage\Node\Directory as DirectoryNode;
 use SebastianBergmann\CodeCoverage\Node\File as FileNode;
+use SebastianBergmann\CodeCoverage\Util\Filesystem as DirectoryUtil;
 use SebastianBergmann\CodeCoverage\Version;
 use SebastianBergmann\CodeCoverage\XmlException;
 use SebastianBergmann\Environment\Runtime;
 
 final class Facade
 {
-    /**
-     * @var string
-     */
-    private $target;
-
-    /**
-     * @var Project
-     */
-    private $project;
-
-    /**
-     * @var string
-     */
-    private $phpUnitVersion;
+    private string $target;
+    private Project $project;
+    private readonly string $phpUnitVersion;
 
     public function __construct(string $version)
     {
@@ -109,7 +98,7 @@ final class Facade
             }
         }
 
-        DirectoryUtil::create($directory);
+        DirectoryUtil::createDirectory($directory);
     }
 
     /**
@@ -240,9 +229,9 @@ final class Facade
         $loc = $node->linesOfCode();
 
         $totals->setNumLines(
-            $loc->linesOfCode(),
-            $loc->commentLinesOfCode(),
-            $loc->nonCommentLinesOfCode(),
+            $loc['linesOfCode'],
+            $loc['commentLinesOfCode'],
+            $loc['nonCommentLinesOfCode'],
             $node->numberOfExecutableLines(),
             $node->numberOfExecutedLines()
         );

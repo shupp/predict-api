@@ -4,6 +4,7 @@ namespace Laravel\Lumen\Routing;
 
 use Closure as BaseClosure;
 use Illuminate\Contracts\Auth\Access\Gate;
+use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -57,7 +58,7 @@ trait ProvidesConvenienceMethods
      * @param  array  $customAttributes
      * @return array
      *
-     * @throws ValidationException
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function validate(Request $request, array $rules, array $messages = [], array $customAttributes = [])
     {
@@ -91,7 +92,7 @@ trait ProvidesConvenienceMethods
      * @param  \Illuminate\Contracts\Validation\Validator  $validator
      * @return void
      *
-     * @throws ValidationException
+     * @throws \Illuminate\Validation\ValidationException
      */
     protected function throwValidationException(Request $request, $validator)
     {
@@ -101,24 +102,31 @@ trait ProvidesConvenienceMethods
     }
 
     /**
-     * {@inheritdoc}
+     * Build a response based on the given errors.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  array  $errors
+     * @return \Illuminate\Http\JsonResponse|mixed
      */
     protected function buildFailedValidationResponse(Request $request, array $errors)
     {
         if (isset(static::$responseBuilder)) {
-            return call_user_func(static::$responseBuilder, $request, $errors);
+            return (static::$responseBuilder)($request, $errors);
         }
 
         return new JsonResponse($errors, 422);
     }
 
     /**
-     * {@inheritdoc}
+     * Format validation errors.
+     *
+     * @param  \Illuminate\Validation\Validator  $validator
+     * @return array|mixed
      */
     protected function formatValidationErrors(Validator $validator)
     {
         if (isset(static::$errorFormatter)) {
-            return call_user_func(static::$errorFormatter, $validator);
+            return (static::$errorFormatter)($validator);
         }
 
         return $validator->errors()->getMessages();
@@ -181,7 +189,7 @@ trait ProvidesConvenienceMethods
      */
     public function dispatch($job)
     {
-        return app('Illuminate\Contracts\Bus\Dispatcher')->dispatch($job);
+        return app(Dispatcher::class)->dispatch($job);
     }
 
     /**
@@ -193,7 +201,7 @@ trait ProvidesConvenienceMethods
      */
     public function dispatchNow($job, $handler = null)
     {
-        return app('Illuminate\Contracts\Bus\Dispatcher')->dispatchNow($job, $handler);
+        return app(Dispatcher::class)->dispatchNow($job, $handler);
     }
 
     /**

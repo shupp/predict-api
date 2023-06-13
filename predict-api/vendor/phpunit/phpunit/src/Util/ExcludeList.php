@@ -15,22 +15,15 @@ use function defined;
 use function dirname;
 use function is_dir;
 use function realpath;
-use function sprintf;
-use function strpos;
+use function str_starts_with;
 use function sys_get_temp_dir;
 use Composer\Autoload\ClassLoader;
 use DeepCopy\DeepCopy;
-use Doctrine\Instantiator\Instantiator;
 use PharIo\Manifest\Manifest;
 use PharIo\Version\Version as PharIoVersion;
-use phpDocumentor\Reflection\DocBlock;
-use phpDocumentor\Reflection\Project;
-use phpDocumentor\Reflection\Type;
 use PhpParser\Parser;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Prophet;
 use ReflectionClass;
-use ReflectionException;
 use SebastianBergmann\CliParser\Parser as CliParser;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
 use SebastianBergmann\CodeUnit\CodeUnit;
@@ -46,14 +39,11 @@ use SebastianBergmann\Invoker\Invoker;
 use SebastianBergmann\LinesOfCode\Counter;
 use SebastianBergmann\ObjectEnumerator\Enumerator;
 use SebastianBergmann\RecursionContext\Context;
-use SebastianBergmann\ResourceOperations\ResourceOperations;
 use SebastianBergmann\Template\Template;
 use SebastianBergmann\Timer\Timer;
 use SebastianBergmann\Type\TypeName;
 use SebastianBergmann\Version;
-use Symfony\Polyfill\Ctype\Ctype;
 use TheSeer\Tokenizer\Tokenizer;
-use Webmozart\Assert\Assert;
 
 /**
  * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
@@ -61,14 +51,11 @@ use Webmozart\Assert\Assert;
 final class ExcludeList
 {
     /**
-     * @var array<string,int>
+     * @psalm-var array<string,int>
      */
     private const EXCLUDED_CLASS_NAMES = [
         // composer
         ClassLoader::class => 1,
-
-        // doctrine/instantiator
-        Instantiator::class => 1,
 
         // myclabs/deepcopy
         DeepCopy::class => 1,
@@ -81,18 +68,6 @@ final class ExcludeList
 
         // phar-io/version
         PharIoVersion::class => 1,
-
-        // phpdocumentor/reflection-common
-        Project::class => 1,
-
-        // phpdocumentor/reflection-docblock
-        DocBlock::class => 1,
-
-        // phpdocumentor/type-resolver
-        Type::class => 1,
-
-        // phpspec/prophecy
-        Prophet::class => 1,
 
         // phpunit/phpunit
         TestCase::class => 2,
@@ -148,69 +123,66 @@ final class ExcludeList
         // sebastian/recursion-context
         Context::class => 1,
 
-        // sebastian/resource-operations
-        ResourceOperations::class => 1,
-
         // sebastian/type
         TypeName::class => 1,
 
         // sebastian/version
         Version::class => 1,
 
-        // symfony/polyfill-ctype
-        Ctype::class => 1,
-
         // theseer/tokenizer
         Tokenizer::class => 1,
-
-        // webmozart/assert
-        Assert::class => 1,
     ];
 
     /**
-     * @var string[]
+     * @psalm-var list<string>
      */
-    private static $directories;
+    private static array $directories = [];
+    private static bool $initialized  = false;
+    private readonly bool $enabled;
 
+    /**
+     * @psalm-param non-empty-string $directory
+     *
+     * @throws InvalidDirectoryException
+     */
     public static function addDirectory(string $directory): void
     {
         if (!is_dir($directory)) {
-            throw new Exception(
-                sprintf(
-                    '"%s" is not a directory',
-                    $directory
-                )
-            );
+            throw new InvalidDirectoryException($directory);
         }
 
         self::$directories[] = realpath($directory);
     }
 
+    public function __construct(?bool $enabled = null)
+    {
+        if ($enabled === null) {
+            $enabled = !defined('PHPUNIT_TESTSUITE');
+        }
+
+        $this->enabled = $enabled;
+    }
+
     /**
-     * @throws Exception
-     *
-     * @return string[]
+     * @psalm-return list<string>
      */
     public function getExcludedDirectories(): array
     {
-        $this->initialize();
+        self::initialize();
 
         return self::$directories;
     }
 
-    /**
-     * @throws Exception
-     */
     public function isExcluded(string $file): bool
     {
-        if (defined('PHPUNIT_TESTSUITE')) {
+        if (!$this->enabled) {
             return false;
         }
 
-        $this->initialize();
+        self::initialize();
 
         foreach (self::$directories as $directory) {
-            if (strpos($file, $directory) === 0) {
+            if (str_starts_with($file, $directory)) {
                 return true;
             }
         }
@@ -218,44 +190,33 @@ final class ExcludeList
         return false;
     }
 
-    /**
-     * @throws Exception
-     */
-    private function initialize(): void
+    private static function initialize(): void
     {
-        if (self::$directories === null) {
-            self::$directories = [];
-
-            foreach (self::EXCLUDED_CLASS_NAMES as $className => $parent) {
-                if (!class_exists($className)) {
-                    continue;
-                }
-
-                try {
-                    $directory = (new ReflectionClass($className))->getFileName();
-                    // @codeCoverageIgnoreStart
-                } catch (ReflectionException $e) {
-                    throw new Exception(
-                        $e->getMessage(),
-                        (int) $e->getCode(),
-                        $e
-                    );
-                }
-                // @codeCoverageIgnoreEnd
-
-                for ($i = 0; $i < $parent; $i++) {
-                    $directory = dirname($directory);
-                }
-
-                self::$directories[] = $directory;
-            }
-
-            // Hide process isolation workaround on Windows.
-            if (DIRECTORY_SEPARATOR === '\\') {
-                // tempnam() prefix is limited to first 3 chars.
-                // @see https://php.net/manual/en/function.tempnam.php
-                self::$directories[] = sys_get_temp_dir() . '\\PHP';
-            }
+        if (self::$initialized) {
+            return;
         }
+
+        foreach (self::EXCLUDED_CLASS_NAMES as $className => $parent) {
+            if (!class_exists($className)) {
+                continue;
+            }
+
+            $directory = (new ReflectionClass($className))->getFileName();
+
+            for ($i = 0; $i < $parent; $i++) {
+                $directory = dirname($directory);
+            }
+
+            self::$directories[] = $directory;
+        }
+
+        // Hide process isolation workaround on Windows.
+        if (DIRECTORY_SEPARATOR === '\\') {
+            // tempnam() prefix is limited to first 3 chars.
+            // @see https://php.net/manual/en/function.tempnam.php
+            self::$directories[] = sys_get_temp_dir() . '\\PHP';
+        }
+
+        self::$initialized = true;
     }
 }

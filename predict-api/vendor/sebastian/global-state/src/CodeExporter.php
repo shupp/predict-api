@@ -16,9 +16,6 @@ use function serialize;
 use function sprintf;
 use function var_export;
 
-/**
- * Exports parts of a Snapshot as PHP code.
- */
 final class CodeExporter
 {
     public function constants(Snapshot $snapshot): string
@@ -39,7 +36,18 @@ final class CodeExporter
 
     public function globalVariables(Snapshot $snapshot): string
     {
-        $result = '$GLOBALS = [];' . PHP_EOL;
+        $result = <<<'EOT'
+call_user_func(
+    function ()
+    {
+        foreach (array_keys($GLOBALS) as $key) {
+            unset($GLOBALS[$key]);
+        }
+    }
+);
+
+
+EOT;
 
         foreach ($snapshot->globalVariables() as $name => $value) {
             $result .= sprintf(
@@ -67,7 +75,7 @@ final class CodeExporter
         return $result;
     }
 
-    private function exportVariable($variable): string
+    private function exportVariable(mixed $variable): string
     {
         if (is_scalar($variable) || null === $variable ||
             (is_array($variable) && $this->arrayOnlyContainsScalars($variable))) {

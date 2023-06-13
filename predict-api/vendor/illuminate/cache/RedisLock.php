@@ -36,9 +36,9 @@ class RedisLock extends Lock
     {
         if ($this->seconds > 0) {
             return $this->redis->set($this->name, $this->owner, 'EX', $this->seconds, 'NX') == true;
-        } else {
-            return $this->redis->setnx($this->name, $this->owner) === 1;
         }
+
+        return $this->redis->setnx($this->name, $this->owner) === 1;
     }
 
     /**
@@ -69,5 +69,15 @@ class RedisLock extends Lock
     protected function getCurrentOwner()
     {
         return $this->redis->get($this->name);
+    }
+
+    /**
+     * Get the name of the Redis connection being used to manage the lock.
+     *
+     * @return string
+     */
+    public function getConnectionName()
+    {
+        return $this->redis->getName();
     }
 }

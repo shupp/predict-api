@@ -2,13 +2,11 @@
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/nesbot/carbon.svg?style=flat-square)](https://packagist.org/packages/nesbot/carbon)
 [![Total Downloads](https://img.shields.io/packagist/dt/nesbot/carbon.svg?style=flat-square)](https://packagist.org/packages/nesbot/carbon)
-[![GitHub Actions](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fbriannesbitt%2FCarbon%2Fbadge&style=flat-square&label=Build&logo=none)](https://actions-badge.atrox.dev/briannesbitt/Carbon/goto)
-[![StyleCI](https://github.styleci.io/repos/5724990/shield?style=flat-square)](https://github.styleci.io/repos/5724990)
+[![GitHub Actions](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fbriannesbitt%2FCarbon%2Fbadge&style=flat-square&label=Build&logo=none)](https://github.com/briannesbitt/Carbon/actions)
 [![codecov.io](https://img.shields.io/codecov/c/github/briannesbitt/Carbon.svg?style=flat-square)](https://codecov.io/github/briannesbitt/Carbon?branch=master)
-[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-44CC11.svg?longCache=true&style=flat-square)](https://github.com/phpstan/phpstan)
 [![Tidelift](https://tidelift.com/badges/github/briannesbitt/Carbon)](https://tidelift.com/subscription/pkg/packagist-nesbot-carbon?utm_source=packagist-nesbot-carbon&utm_medium=referral&utm_campaign=readme)
 
-An international PHP extension for DateTime. [http://carbon.nesbot.com](http://carbon.nesbot.com)
+An international PHP extension for DateTime. [https://carbon.nesbot.com](https://carbon.nesbot.com)
 
 ```php
 <?php
@@ -84,7 +82,7 @@ printf("Now: %s", Carbon::now());
 
 ### Without Composer
 
-Why are you not using [composer](http://getcomposer.org/)? Download the Carbon [latest release](https://github.com/briannesbitt/Carbon/releases) and put the contents of the ZIP archive into a directory in your project. Then require the file `autoload.php` to get all classes and dependencies loaded on need.
+Why are you not using [composer](https://getcomposer.org/)? Download the Carbon [latest release](https://github.com/briannesbitt/Carbon/releases) and put the contents of the ZIP archive into a directory in your project. Then require the file `autoload.php` to get all classes and dependencies loaded on need.
 
 ```php
 <?php
@@ -97,7 +95,7 @@ printf("Now: %s", Carbon::now());
 
 ## Docs
 
-[http://carbon.nesbot.com/docs](http://carbon.nesbot.com/docs)
+[https://carbon.nesbot.com/docs](https://carbon.nesbot.com/docs)
 
 ## Security contact information
 
@@ -117,20 +115,36 @@ This project exists thanks to all the people who contribute.
 
 [Thanks to people helping us to translate Carbon in so many languages](https://carbon.nesbot.com/contribute/translators/)
 
+### Sponsors
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website.
+
+<a href="https://tidelift.com/subscription/pkg/packagist-nesbot-carbon?utm_source=packagist-nesbot-carbon&utm_medium=referral&utm_campaign=readme" target="_blank"><img src="https://carbon.nesbot.com/tidelift-brand.png" width="256" height="64"></a><!-- <open-collective-sponsors> -->
+<a title="#1 Guide To Online Gambling In Canada" href="https://casinohex.org/canada/?utm_source=opencollective&amp;utm_medium=github&amp;utm_campaign=Carbon" target="_blank" rel="sponsored"><img alt="CasinoHex Canada" src="https://opencollective-production.s3.us-west-1.amazonaws.com/79fdbcc0-a997-11eb-abbc-25e48b63c6dc.jpg" width="85" height="64"></a>
+<a title="Casino-portugal.pt" href="https://casino-portugal.pt/?utm_source=opencollective&amp;utm_medium=github&amp;utm_campaign=Carbon" target="_blank" rel="sponsored"><img alt="Casino-portugal.pt" src="https://logo.clearbit.com/casino-portugal.pt" width="64" height="64"></a>
+<a title="Slots City® ➢ Лучшее лицензионно казино онлайн и оффлайн на гривны в Украине. 【 Более1500 игровых автоматов и слотов】✅ Официально и Безопасно" href="https://slotscity.ua/?utm_source=opencollective&amp;utm_medium=github&amp;utm_campaign=Carbon" target="_blank" rel="sponsored"><img alt="Slots City" src="https://opencollective-production.s3.us-west-1.amazonaws.com/d7e298c0-7abe-11ed-8553-230872f5e54d.png" width="90" height="64"></a>
+<a title="inkedin" href="https://inkedin.com?utm_source=opencollective&amp;utm_medium=github&amp;utm_campaign=Carbon" target="_blank" rel="sponsored"><img alt="inkedin" src="https://logo.clearbit.com/inkedin.com" width="64" height="64"></a>
+<a title="Znajdź najlepsze zakłady bukmacherskie w Polsce w 2023 roku. Probukmacher.pl to Twoje kompendium wiedzy na temat bukmacherów!" href="https://www.probukmacher.pl?utm_source=opencollective&amp;utm_medium=github&amp;utm_campaign=Carbon" target="_blank" rel="sponsored"><img alt="Probukmacher" src="https://opencollective-production.s3.us-west-1.amazonaws.com/account-avatar/caf50271-4560-4ffe-a434-ea15239168db/Screenshot_1.png" width="89" height="64"></a>
+<a title="A self-hosted web radio management suite, including turnkey installer tools and an easy-to-use web app to manage your stations. " href="https://azuracast.com?utm_source=opencollective&amp;utm_medium=github&amp;utm_campaign=Carbon" target="_blank" rel="sponsored"><img alt="AzuraCast" src="https://opencollective-production.s3.us-west-1.amazonaws.com/3c12ea10-cdfb-11eb-9cf4-3760b386b76d.png" width="64" height="64"></a>
+<a title="Triplebyte is the first software engineering job platform that is on the developer&#039;s side. Take our coding quiz!" href="https://triplebyte.com/os/opencollective?utm_source=opencollective&amp;utm_medium=github&amp;utm_campaign=Carbon" target="_blank" rel="sponsored"><img alt="Triplebyte" src="https://opencollective-production.s3.us-west-1.amazonaws.com/43e4f9d0-30cd-11ea-9c6b-e1142996e8b2.png" width="64" height="64"></a>
+<a title="Connect your Collective to GitHub Sponsors: https://docs.opencollective.com/help/collectives/github-sponsors" href="https://github.com/sponsors/?utm_source=opencollective&amp;utm_medium=github&amp;utm_campaign=Carbon" target="_blank" rel="sponsored"><img alt="GitHub Sponsors" src="https://opencollective-production.s3.us-west-1.amazonaws.com/87b1d240-f617-11ea-9960-fd7e8ab20fe4.png" width="73" height="64"></a>
+<a title="Salesforce" href="https://engineering.salesforce.com?utm_source=opencollective&amp;utm_medium=github&amp;utm_campaign=Carbon" target="_blank" rel="sponsored"><img alt="Salesforce" src="https://opencollective-production.s3.us-west-1.amazonaws.com/24d34880-df8d-11e9-949c-6bc2037b6bd5.png" width="64" height="64"></a>
+<!-- </open-collective-sponsors> -->
+
+[[Become a sponsor via OpenCollective](https://opencollective.com/Carbon#sponsor)]
+
+<a href="https://github.com/taylorotwell" target="_blank"><img src="https://avatars.githubusercontent.com/u/463230?s=128&v=4" width="64" height="64"></a>
+<a href="https://github.com/usefathom" target="_blank"><img src="https://avatars.githubusercontent.com/u/38684088?s=128&v=4" width="64" height="64"></a>
+
+[[Become a sponsor via GitHub](https://github.com/sponsors/kylekatarnls)]
+
 ### Backers
 
-Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/Carbon#backer)]
+Thank you to all our backers! 🙏
 
 <a href="https://opencollective.com/Carbon#backers" target="_blank"><img src="https://opencollective.com/Carbon/backers.svg?width=890"></a>
 
-### Sponsors
-
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/Carbon#sponsor)]
-<a href="https://opencollective.com/Carbon/sponsor/0/website" target="_blank"><img src="https://opencollective.com/Carbon/sponsor/0/avatar.svg"></a>
-<a href="https://opencollective.com/Carbon/sponsor/1/website" target="_blank"><img src="https://opencollective.com/Carbon/sponsor/1/avatar.svg"></a>
-<a href="https://opencollective.com/Carbon/sponsor/2/website" target="_blank"><img src="https://opencollective.com/Carbon/sponsor/2/avatar.svg"></a>
-<a href="https://opencollective.com/Carbon/sponsor/3/website" target="_blank"><img src="https://opencollective.com/Carbon/sponsor/3/avatar.svg"></a>
-<a href="https://opencollective.com/Carbon/sponsor/4/website" target="_blank"><img src="https://opencollective.com/Carbon/sponsor/4/avatar.svg"></a>
+[[Become a backer](https://opencollective.com/Carbon#backer)]
 
 ## Carbon for enterprise
 

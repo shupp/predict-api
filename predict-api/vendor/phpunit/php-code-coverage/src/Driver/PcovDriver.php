@@ -9,54 +9,72 @@
  */
 namespace SebastianBergmann\CodeCoverage\Driver;
 
+use const pcov\inclusive;
+use function array_intersect;
 use function extension_loaded;
+use function pcov\clear;
+use function pcov\collect;
+use function pcov\start;
+use function pcov\stop;
+use function pcov\waiting;
 use function phpversion;
+use SebastianBergmann\CodeCoverage\Data\RawCodeCoverageData;
 use SebastianBergmann\CodeCoverage\Filter;
-use SebastianBergmann\CodeCoverage\RawCodeCoverageData;
 
 /**
  * @internal This class is not covered by the backward compatibility promise for phpunit/php-code-coverage
  */
 final class PcovDriver extends Driver
 {
-    /**
-     * @var Filter
-     */
-    private $filter;
+    private readonly Filter $filter;
 
     /**
      * @throws PcovNotAvailableException
      */
     public function __construct(Filter $filter)
     {
-        if (!extension_loaded('pcov')) {
-            throw new PcovNotAvailableException;
-        }
+        $this->ensurePcovIsAvailable();
 
         $this->filter = $filter;
     }
 
     public function start(): void
     {
-        \pcov\start();
+        start();
     }
 
     public function stop(): RawCodeCoverageData
     {
-        \pcov\stop();
+        stop();
 
-        $collect = \pcov\collect(
-            \pcov\inclusive,
-            !$this->filter->isEmpty() ? $this->filter->files() : \pcov\waiting()
-        );
+        $filesToCollectCoverageFor = waiting();
+        $collected                 = [];
 
-        \pcov\clear();
+        if ($filesToCollectCoverageFor) {
+            if (!$this->filter->isEmpty()) {
+                $filesToCollectCoverageFor = array_intersect($filesToCollectCoverageFor, $this->filter->files());
+            }
 
-        return RawCodeCoverageData::fromXdebugWithoutPathCoverage($collect);
+            $collected = collect(inclusive, $filesToCollectCoverageFor);
+
+            clear();
+        }
+
+        return RawCodeCoverageData::fromXdebugWithoutPathCoverage($collected);
     }
 
     public function nameAndVersion(): string
     {
         return 'PCOV ' . phpversion('pcov');
+    }
+
+    /**
+     * @throws PcovNotAvailableException
+     */
+    private function ensurePcovIsAvailable(): void
+    {
+        if (!extension_loaded('pcov')) {
+            throw new PcovNotAvailableException;
+        }
     }
 }

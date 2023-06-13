@@ -11,13 +11,13 @@ namespace SebastianBergmann\CodeCoverage\Report\Html;
 
 use function array_pop;
 use function count;
-use function phpversion;
 use function sprintf;
 use function str_repeat;
 use function substr_count;
 use SebastianBergmann\CodeCoverage\Node\AbstractNode;
 use SebastianBergmann\CodeCoverage\Node\Directory as DirectoryNode;
 use SebastianBergmann\CodeCoverage\Node\File as FileNode;
+use SebastianBergmann\CodeCoverage\Report\Thresholds;
 use SebastianBergmann\CodeCoverage\Version;
 use SebastianBergmann\Environment\Runtime;
 use SebastianBergmann\Template\Template;
@@ -27,48 +27,19 @@ use SebastianBergmann\Template\Template;
  */
 abstract class Renderer
 {
-    /**
-     * @var string
-     */
-    protected $templatePath;
+    protected string $templatePath;
+    protected string $generator;
+    protected string $date;
+    protected Thresholds $thresholds;
+    protected bool $hasBranchCoverage;
+    protected string $version;
 
-    /**
-     * @var string
-     */
-    protected $generator;
-
-    /**
-     * @var string
-     */
-    protected $date;
-
-    /**
-     * @var int
-     */
-    protected $lowUpperBound;
-
-    /**
-     * @var int
-     */
-    protected $highLowerBound;
-
-    /**
-     * @var bool
-     */
-    protected $hasBranchCoverage;
-
-    /**
-     * @var string
-     */
-    protected $version;
-
-    public function __construct(string $templatePath, string $generator, string $date, int $lowUpperBound, int $highLowerBound, bool $hasBranchCoverage)
+    public function __construct(string $templatePath, string $generator, string $date, Thresholds $thresholds, bool $hasBranchCoverage)
     {
         $this->templatePath      = $templatePath;
         $this->generator         = $generator;
         $this->date              = $date;
-        $this->lowUpperBound     = $lowUpperBound;
-        $this->highLowerBound    = $highLowerBound;
+        $this->thresholds        = $thresholds;
         $this->version           = Version::id();
         $this->hasBranchCoverage = $hasBranchCoverage;
     }
@@ -200,8 +171,8 @@ abstract class Renderer
                 'version'          => $this->version,
                 'runtime'          => $this->runtimeString(),
                 'generator'        => $this->generator,
-                'low_upper_bound'  => $this->lowUpperBound,
-                'high_lower_bound' => $this->highLowerBound,
+                'low_upper_bound'  => $this->thresholds->lowUpperBound(),
+                'high_lower_bound' => $this->thresholds->highLowerBound(),
             ]
         );
     }
@@ -289,12 +260,12 @@ abstract class Renderer
 
     protected function colorLevel(float $percent): string
     {
-        if ($percent <= $this->lowUpperBound) {
+        if ($percent <= $this->thresholds->lowUpperBound()) {
             return 'danger';
         }
 
-        if ($percent > $this->lowUpperBound &&
-            $percent < $this->highLowerBound) {
+        if ($percent > $this->thresholds->lowUpperBound() &&
+            $percent < $this->thresholds->highLowerBound()) {
             return 'warning';
         }
 
@@ -305,29 +276,11 @@ abstract class Renderer
     {
         $runtime = new Runtime;
 
-        $buffer = sprintf(
+        return sprintf(
             '<a href="%s" target="_top">%s %s</a>',
             $runtime->getVendorUrl(),
             $runtime->getName(),
             $runtime->getVersion()
         );
-
-        if ($runtime->hasPHPDBGCodeCoverage()) {
-            return $buffer;
-        }
-
-        if ($runtime->hasPCOV()) {
-            $buffer .= sprintf(
-                ' with <a href="https://github.com/krakjoe/pcov">PCOV %s</a>',
-                phpversion('pcov')
-            );
-        } elseif ($runtime->hasXdebug()) {
-            $buffer .= sprintf(
-                ' with <a href="https://xdebug.org/">Xdebug %s</a>',
-                phpversion('xdebug')
-            );
-        }
-
-        return $buffer;
     }
 }

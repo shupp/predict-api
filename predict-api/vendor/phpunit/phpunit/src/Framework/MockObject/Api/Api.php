@@ -18,31 +18,19 @@ use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
 trait Api
 {
     /**
-     * @var ConfigurableMethod[]
+     * @psalm-var list<ConfigurableMethod>
      */
-    private static $__phpunit_configurableMethods;
-
-    /**
-     * @var object
-     */
-    private $__phpunit_originalObject;
-
-    /**
-     * @var bool
-     */
-    private $__phpunit_returnValueGeneration = true;
-
-    /**
-     * @var InvocationHandler
-     */
-    private $__phpunit_invocationMocker;
+    private static array $__phpunit_configurableMethods;
+    private object $__phpunit_originalObject;
+    private bool $__phpunit_returnValueGeneration          = true;
+    private ?InvocationHandler $__phpunit_invocationMocker = null;
 
     /** @noinspection MagicMethodsValidityInspection */
     public static function __phpunit_initConfigurableMethods(ConfigurableMethod ...$configurableMethods): void
     {
         if (isset(static::$__phpunit_configurableMethods)) {
             throw new ConfigurableMethodsAlreadyInitializedException(
-                'Configurable methods is already initialized and can not be reinitialized'
+                'Configurable methods is already initialized and can not be reinitialized',
             );
         }
 
@@ -50,7 +38,7 @@ trait Api
     }
 
     /** @noinspection MagicMethodsValidityInspection */
-    public function __phpunit_setOriginalObject($originalObject): void
+    public function __phpunit_setOriginalObject(object $originalObject): void
     {
         $this->__phpunit_originalObject = $originalObject;
     }
@@ -67,7 +55,7 @@ trait Api
         if ($this->__phpunit_invocationMocker === null) {
             $this->__phpunit_invocationMocker = new InvocationHandler(
                 static::$__phpunit_configurableMethods,
-                $this->__phpunit_returnValueGeneration
+                $this->__phpunit_returnValueGeneration,
             );
         }
 

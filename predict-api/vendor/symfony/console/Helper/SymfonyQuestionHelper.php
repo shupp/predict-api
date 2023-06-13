@@ -26,7 +26,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class SymfonyQuestionHelper extends QuestionHelper
 {
     /**
-     * {@inheritdoc}
+     * @return void
      */
     protected function writePrompt(OutputInterface $output, Question $question)
     {
@@ -84,7 +84,7 @@ class SymfonyQuestionHelper extends QuestionHelper
     }
 
     /**
-     * {@inheritdoc}
+     * @return void
      */
     protected function writeError(OutputInterface $output, \Exception $error)
     {
@@ -100,7 +100,7 @@ class SymfonyQuestionHelper extends QuestionHelper
 
     private function getEofShortcut(): string
     {
-        if (false !== strpos(\PHP_OS, 'WIN')) {
+        if ('Windows' === \PHP_OS_FAMILY) {
             return '<comment>Ctrl+Z</comment> then <comment>Enter</comment>';
         }
 

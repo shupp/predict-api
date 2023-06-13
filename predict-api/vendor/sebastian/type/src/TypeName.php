@@ -17,15 +17,8 @@ use ReflectionClass;
 
 final class TypeName
 {
-    /**
-     * @var ?string
-     */
-    private $namespaceName;
-
-    /**
-     * @var string
-     */
-    private $simpleName;
+    private ?string $namespaceName;
+    private string $simpleName;
 
     public static function fromQualifiedName(string $fullClassName): self
     {
@@ -74,36 +67,6 @@ final class TypeName
         return $this->namespaceName === null
              ? $this->simpleName
              : $this->namespaceName . '\\' . $this->simpleName;
-    }
-
-    /**
-     * @deprecated Use namespaceName() instead
-     *
-     * @codeCoverageIgnore
-     */
-    public function getNamespaceName(): ?string
-    {
-        return $this->namespaceName();
-    }
-
-    /**
-     * @deprecated Use simpleName() instead
-     *
-     * @codeCoverageIgnore
-     */
-    public function getSimpleName(): string
-    {
-        return $this->simpleName();
-    }
-
-    /**
-     * @deprecated Use qualifiedName() instead
-     *
-     * @codeCoverageIgnore
-     */
-    public function getQualifiedName(): string
-    {
-        return $this->qualifiedName();
     }
 
     public function isNamespaced(): bool
