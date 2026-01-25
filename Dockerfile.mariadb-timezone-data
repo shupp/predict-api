@@ -3,6 +3,6 @@ RUN ln -s /usr/bin/mariadb /usr/bin/mysql
 RUN apt-get update && apt-get install -y gdal-bin curl unzip
 RUN cd / \
         && curl -L -o /timezones.shapefile.zip \
-        https://github.com/evansiroky/timezone-boundary-builder/releases/download/2023b/timezones-with-oceans.shapefile.zip \
+        https://github.com/evansiroky/timezone-boundary-builder/releases/download/2025c/timezones-with-oceans.shapefile.zip \
         && unzip timezones.shapefile.zip \
         && rm timezones.shapefile.zip
