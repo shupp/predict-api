@@ -1,4 +1,5 @@
 FROM mariadb:latest
+RUN ln -s /usr/bin/mariadb /usr/bin/mysql
 RUN apt-get update && apt-get install -y gdal-bin curl unzip
 RUN cd / \
         && curl -L -o /timezones.shapefile.zip \
