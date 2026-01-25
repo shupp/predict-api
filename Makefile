@@ -40,21 +40,21 @@ up: ## Docker "up" the containers
 	DB_DATABASE=$(DB_DATABASE) \
 	DB_USERNAME=$(DB_USERNAME) \
 	DB_PASSWORD=$(DB_PASSWORD) \
-	docker-compose up -d
+	docker compose up -d
 down: ## Docker "down" the containers
 	DB_HOST=$(DB_HOST) \
 	DB_PORT=$(DB_PORT) \
 	DB_DATABASE=$(DB_DATABASE) \
 	DB_USERNAME=$(DB_USERNAME) \
 	DB_PASSWORD=$(DB_PASSWORD) \
-	docker-compose down
+	docker compose down
 logs: ## View and follow docker logs for all containers
 	DB_HOST=$(DB_HOST) \
 	DB_PORT=$(DB_PORT) \
 	DB_DATABASE=$(DB_DATABASE) \
 	DB_USERNAME=$(DB_USERNAME) \
 	DB_PASSWORD=$(DB_PASSWORD) \
-	docker-compose logs -f
+	docker compose logs -f
 
 # Debug targets
 # Get a shell on the running api service container
@@ -64,7 +64,7 @@ bash:  ## Get a bash shell on a running api container
 	DB_DATABASE=$(DB_DATABASE) \
 	DB_USERNAME=$(DB_USERNAME) \
 	DB_PASSWORD=$(DB_PASSWORD) \
-	docker-compose exec api bash -o vi
+	docker compose exec api bash -o vi
 
 bash-db: ## Get a bash shell on a running db container
 	DB_HOST=$(DB_HOST) \
@@ -73,7 +73,7 @@ bash-db: ## Get a bash shell on a running db container
 	DB_USERNAME=$(DB_USERNAME) \
 	DB_PASSWORD=$(DB_PASSWORD) \
 	SECRET_DB_PASS=$(DB_PASSWORD) \
-	docker-compose exec mysql bash -o vi
+	docker compose exec mysql bash -o vi
 
 
 # HELPERS
